@@ -1,0 +1,346 @@
+//
+// Headings
+//
+header {
+    margin-bottom: $margin-bottom-small;
+    @media screen and (min-width: $screen-md) {
+        margin-bottom: $margin-bottom-large;
+    }
+}
+
+h1,
+.h1 {
+    font-size: em(28);
+    text-align: center;
+    @media screen and (min-width: $screen-sm) {
+        font-size: em(40);
+    }
+    @media screen and (min-width: ($screen-md)) {
+        font-size: em(50);
+    }
+    & small {
+        @media screen and (max-width: ($screen-sm)) {
+            font-size: 80%;
+            line-height: 110%;
+        }
+    }
+
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $headings-color;
+    }
+
+    .color-scheme-blue & {
+        color: $white;
+    }
+
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+h2,
+.h2 {
+    font-size: em(24);
+    margin-top: 0;
+    @media screen and (min-width: $screen-sm) {
+        font-size: em(30);
+    }
+    & small {
+        font-size: 80%;
+        line-height: 110%;
+    }
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $headings-color;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+h3,
+.h3 {
+    margin-top: 0;
+    font-size: em(20);
+    & small {
+        font-size: 80%;
+        line-height: 110%;
+    }
+    @media screen and (min-width: $screen-sm) {
+        font-size: em(24);
+    }
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $headings-color;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+h4,
+.h4 {
+    //font-family: OpenSans-Semibold;
+    font-size: em(18);
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $headings-color;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+h5,
+.h5 {
+    //font-family: OpenSans-Semibold;
+    font-size: em(15);
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $headings-color;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+h6,
+.h6 {
+    //font-family: OpenSans-Semibold;
+    font-size: em(12);
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $headings-color;
+    }
+    .color-scheme-blue & {
+        color: white;
+    }
+    .color-scheme-navy & {
+        color: white;
+    }
+}
+
+.accent-subheader {
+    font-family: $pru-SerifItalic;
+    color: $black-off-70;
+    font-size: em(18);
+    text-align: center;
+}
+
+small.headings-small-eyebrow {
+    display: block;
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $pru-blue;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $pru-light-blue;
+    }
+}
+
+small.headings-small-bottom {
+    display: block;
+    font-weight: normal;
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $gray-light;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+
+
+//
+// Paragraphs and Links
+//
+p {
+    font-size: em(15);
+    line-height: 1.4;
+    & small {
+        font-size: em(12);
+        line-height: 17px;
+    }
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $pru-text;
+    }
+    .color-scheme-blue & {
+        color: $pru-sky-blue;
+    }
+    .color-scheme-navy & {
+        color: $gray-lighter;
+    }
+    @media screen and (min-width: $screen-sm) {
+        font-size: em(16);
+        line-height: 1.5;
+    }
+}
+
+.intro-blue {
+    color: $pru-blue;
+    @media (min-width: $screen-sm-min) {
+        font-size: 1.7em;
+        line-height: 1.15em;
+    }
+}
+
+
+#maincontent p > a {
+  text-decoration: underline;
+}
+
+//
+// Links
+//
+a {
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $pru-link;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+
+    &:focus {
+       font-weight: bold;
+    }
+}
+
+a.accordion-icon-control {
+    color: $pru-text;
+}
+
+
+
+
+//
+// Lists
+//
+li {
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $pru-text;
+    }
+    .color-scheme-blue & {
+        color: $white;
+    }
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+.list-block-xs-inline-lg {
+    @media (min-width: $screen-lg-min) {
+        > li {
+            display: inline-block;
+        }
+    }
+    @media (min-width: $screen-md-min) {
+        > li {
+            display: inline-block;
+        }
+    }
+}
+
+.list-bullet-blue li {
+    color: $pru-blue;
+    margin-bottom: $padding-large-vertical;
+}
+
+.list-unindented {
+    margin-left: 0 !important;
+    padding-left: 15px !important;
+    -webkit-padding-start: 20px !important;
+}
+
+.list-unindented,
+.rte ol,
+.module > ol,
+.component ol {
+    margin-left: 0 !important;
+    padding-left: 15px !important;
+    -webkit-padding-start: 20px !important;
+}
+
+ul#pru-accordion {
+    padding-left: 0;
+}
+
+.danger {
+    color: $pru-red;
+}
+
+.lead {
+    font-size: $font-size-large;
+}
+
+.text-decoration-none {
+    text-decoration: none;
+    &:hover,
+    &:focus,
+    &:visited,
+    &:active {
+        text-decoration: none;
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+
+.text-decoration-none {
+    text-decoration: none;
+    &:hover, &:focus, &:visited, &:active {
+        text-decoration: none;
+    }
+}
+
+// for blockquote
+blockquote{
+    &.fancy {
+        line-height: $font-size-base * 1.7;
+        color: $pru-navy;
+        border-left: 0 solid #eee;
+        @media (min-width: $screen-sm) {
+            font-size: $font-size-base*2;
+            line-height: $font-size-base*2.6;
+        }
+        footer{
+            margin-top: $padding-small-vertical;
+            font-size: $font-size-small*1.2;
+        }
+        p {
+            display: inline;
+            font-family:inherit;
+            font-size: inherit;
+        }
+        a:hover {
+            color:inherit;
+        }
+    }
+}

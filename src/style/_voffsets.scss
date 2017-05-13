@@ -1,0 +1,11 @@
+@for $i from 0 through 30 {
+  .voffset-#{$i} {
+    margin-top: $i * 10px !important;
+  }
+}
+
+@for $i from 0 through 30 {
+  .n-voffset-#{$i} {
+    margin-top: -($i * 10px) !important;
+  }
+}

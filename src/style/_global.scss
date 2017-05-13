@@ -1,0 +1,130 @@
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.animated {
+  animation-duration: 550ms;
+}
+
+.preload {
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+.input-group-addon {
+  background-color: transparent;
+}
+
+i.glyphicon-info-sign,
+pru-icon-tooltip {
+  color: $pru-blue;
+}
+
+.tooltip {
+  width: auto;
+  max-width: 400px;
+  &.in {
+    opacity: 1 !important;
+  }
+  .tooltip-inner {
+    background-color: $gray-lightest !important;
+    color: $black-off-80;
+    text-align: left;
+    border-radius: 0;
+    padding: 20px;
+    font-size: 15px;
+    max-width: 100%;
+    @media only screen and (max-width : $screen-sm) {
+      font-size: 12px;
+    }
+  }
+  &.top {
+    margin-top: -20px;
+    padding: 0;
+    .tooltip-arrow {
+      bottom: -15px;
+      margin-left: -15px;
+      border-width: 15px 15px 0 15px;
+      border-top-color: $gray-lightest !important;
+    }
+  }
+  &.right {
+    margin-left: 20px;
+    padding: 0;
+    .tooltip-arrow {
+      left: -15px;
+      margin-top: -15px !important;
+      border-width: 15px 15px 15px 0 !important;
+      border-right-color: $gray-lightest !important;
+    }
+  }
+  &.bottom {
+    margin-top: 20px;
+    padding: 0;
+    .tooltip-arrow {
+      top: -15px;
+      margin-left: -15px;
+      border-width: 0 15px 15px 15px;
+      border-bottom-color: $gray-lightest !important;
+    }
+  }
+  &.left {
+    margin-left: -20px;
+    padding: 0;
+    .tooltip-arrow {
+      right: -15px;
+      margin-top: -15px !important;
+      border-width: 15px 0 15px 15px !important;
+      border-left-color: $gray-lightest !important;
+    }
+  }
+}
+
+.modal-dialog {
+  height: 80%;
+  margin: 5% auto;
+}
+
+.modal-content {
+  height: 100%;
+  overflow: auto;
+}
+
+.form-control {
+  box-shadow: none;
+}
+
+.input-group-date {
+  input {
+    text-align: center;
+    padding: 6px 8px;
+    &.input-month,
+    &.input-day {
+      border-right: 0;
+    }
+    &.input-day,
+    &.input-year {
+      border-left: 0;
+    }
+  }
+  span {
+    border-left: 0;
+    border-right: 0;
+    padding: 6px 0;
+    color: $gray-lighter-plus;
+    background-color: transparent !important;
+    @media only screen and (max-width : 768px) {
+      padding: 6px 15px;
+    }
+  }
+}
+
+[role="link"] {
+  cursor: pointer;
+}

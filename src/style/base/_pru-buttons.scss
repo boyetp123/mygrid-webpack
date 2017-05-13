@@ -1,0 +1,213 @@
+/*
+  Default button colors are set in bootstrap/_variables.scss
+  They are being overwritten here for color schemes as needed.
+*/
+
+//
+// Common styles
+//
+.btn {
+    padding: 10px 28px;
+    transition: all .15s linear;
+    &:active,
+    &.active {
+        background-image: none;
+    }
+    .btn-icon-right {
+        padding-left: $padding-base-horizontal/2;
+    }
+    .btn-icon-left {
+        padding-right: $padding-base-horizontal/2;
+    }
+}
+
+.btn-padding-lg {
+    padding: $padding-base-vertical*1.5 $padding-base-horizontal*3;
+}
+
+//
+// Mixin for generating pru styles hover and focus
+//
+@mixin btn-styles($background) {
+    &:hover,
+    &:focus {
+        background-color: $background;
+        border-color: inherit;
+    }
+}
+
+//
+// Buttons for color schemes
+// button-variant($color, $background, $border)
+//
+.btn-default {
+    &:hover {
+        background-color: $gray-lightest;
+    }
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
+    }
+    .color-scheme-blue &,
+    .color-scheme-navy & {
+        @include button-variant($btn-default-color, $btn-default-bg, $white);
+    }
+}
+
+.btn-primary {
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        @include button-variant(white, $btn-primary-bg, $btn-primary-border);
+    }
+    .color-scheme-blue & {
+        @include button-variant($pru-navy, $pru-light-blue, $pru-light-blue);
+    }
+    .color-scheme-navy & {
+        @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    }
+}
+
+.btn-critical {
+    @include button-variant($btn-critical-color, $btn-critical-bg, $btn-critical-border);
+    @include btn-styles(lighten($btn-critical-border, 10%));
+    &:hover {
+        border-color: $btn-critical-border;
+    }
+}
+
+.btn-link {
+    .color-scheme-white &,
+    .color-scheme-gray & {
+        color: $link-color;
+    }
+    .color-scheme-blue &,
+    .color-scheme-navy & {
+        color: $white;
+    }
+}
+
+
+//
+// Other Buttons (special cases)
+//
+.btn-warning {
+    @include btn-styles(lighten($btn-warning-border, 10%));
+    &:hover {
+        border-color: $btn-warning-border;
+    }
+}
+
+.btn-search {
+    @include button-variant(white, $pru-dark-blue, $pru-dark-blue);
+    &:hover {
+        color: $white;
+        background-color: lighten($pru-dark-blue, 10%);
+        border-color: lighten($pru-dark-blue, 10%);
+    }
+}
+
+// Buttons for mobile header
+.btn-stacked {
+    background: transparent;
+    color: $white;
+    padding: 0 6px;
+    border-radius: 0;
+    & .fa {
+        /*font awesome icon */
+        display: block;
+        font-size: 22px;
+        font-weight: 700;
+      }
+    & .mobile-buttons-text {
+        /* text label */
+        font-size: $font-size-small;
+        margin: 0px;
+    }
+    &:hover,
+    &:active,
+    &:focus {
+        color: $white;
+        outline: 0;
+    }
+}
+
+//  Button dark blue for desktop header
+.btn-dark-blue {
+    @include button-variant($white, $pru-dark-blue, $pru-dark-blue);
+    padding-right: $padding-base-horizontal*2;
+    padding-left: $padding-base-horizontal*2;
+    &:hover {
+        color: $white;
+        background-color: lighten($pru-dark-blue, 10%);
+        border-color: lighten($pru-dark-blue, 10%);
+    }
+}
+
+
+//  Button Gold for desktop header
+.btn-yellow {
+    @include button-variant($gray-base, $pru-yellow, $pru-yellow);
+    border: 0;
+    &:hover {
+        color: $gray-base;
+        background-color: darken($pru-yellow, 10%);
+    }
+}
+
+//
+// Responsive full width buttons
+//
+.btn-xs-block {
+    @media (max-width: $screen-xs) {
+        display: block;
+        width: 100%;
+    }
+}
+
+.btn-sm-block {
+    @media (max-width: $screen-sm) {
+        display: block;
+        width: 100%;
+    }
+}
+
+.btn-md-block {
+    @media (max-width: $screen-md) {
+        display: block;
+        width: 100%;
+    }
+}
+
+.btn-block + .btn-sm-block,
+.btn-block + .btn-md-block,
+.btn-sm-block + .btn-sm-block,
+.btn-md-block + .btn-md-block,
+.btn-sm-block + .btn-md-block,
+.btn-md-block + .btn-sm-block {
+    margin-top: 5px;
+}
+
+.btn-block-left {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+
+//
+// Responsive Button (long text)
+//
+.btn-responsive {
+    white-space: normal !important;
+    word-wrap: break-word;
+}
+
+.btn-no-side-pad {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.btn--center {
+    display: table;
+    margin: 0 auto;
+}

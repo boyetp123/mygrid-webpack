@@ -1,0 +1,109 @@
+div.mygrid{
+	overflow: hidden;	
+}
+
+div.mygrid > table > tbody > tr > td{
+	vertical-align: top;
+}
+
+div.mygrid  table, div.mygrid table tbody, div.mygrid table td,  div.mygrid table th {
+	table-layout: auto;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+	width:auto;
+	border:none;
+}
+div.mygrid  table .grouped-icons{
+	cursor: pointer;
+}
+div.mygrid > table{
+	width:100%;
+	border-collapse: collapse;
+}
+		
+div.mygrid  div.mygrid-header {
+	width:100%;
+	border-bottom: 1px solid black;
+}
+
+div.mygrid div.mygrid-center div.mygrid-header {
+	overflow: hidden;
+}
+
+div.mygrid-body-y-scroll > table > tbody > tr > td > div{
+	overflow: hidden;
+}
+
+div.mygrid-left div.mygrid-body{
+	overflow: hidden;
+}
+
+div.mygrid  div.mygrid-header > div.mygrid-header-inner{
+	position: relative;
+}
+
+div.mygrid  div.mygrid-header > div.mygrid-header-inner > table {
+	table-layout: fixed;		
+	width:100%;
+    border-collapse: collapse;		
+}
+div.mygrid  div.mygrid-header > div.mygrid-header-inner > table > thead > tr > th {
+	border:1px solid black;
+	vertical-align: bottom;
+	border:none; /*1px solid blue; */
+	padding: none;
+	margin:none;	
+	
+}
+
+div.mygrid  div.mygrid-body{
+	width:100%;	
+}
+div.mygrid div.mygrid-center div.mygrid-body{
+	overflow-y:scroll;
+}
+div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll{
+	position: relative;
+}
+
+div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table{
+	table-layout: fixed;	
+	width:100%;
+	/*border-spacing: 10px;*/
+    border-collapse: collapse;	
+}
+
+div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr > td{
+	border:none; /*1px solid blue; */
+	padding: none;
+	margin:none;	
+	vertical-align: middle;
+}
+div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr > td.grid-cell ,
+div.mygrid  div.mygrid-header > div.mygrid-header-inner > table > thead > tr > th.grid-hdr-cell {
+	padding:3px 2px 3px 8px;
+	vertical-align: middle;
+	overflow: hidden;
+}
+
+div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr:nth-of-type(odd) > td{
+	background-color:lightblue;
+}
+
+
+
+div.mygrid div.mygrid-header th.sortable{
+	cursor: pointer;
+}
+
+.text-right{
+	text-align: right;
+}
+.text-left{
+	text-align: left;	
+}
+.text-center{
+	text-align: center;		
+}
+
+
