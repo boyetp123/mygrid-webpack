@@ -26,7 +26,7 @@ export class GridTest {
         rowData: [],
         width:'800px',
         height:'400px',
-        rowHeight:'30px',
+        rowHeight:'40px',
         pinnedLeftCount:1,
         disableVerticalScroll:false,
         disableHorizontalScroll:false,
@@ -37,14 +37,7 @@ export class GridTest {
     grid:Grid;
     constructor() {
         console.info('GridTest constructor');
-        // this.loadAthletes();
-        //  document.addEventListener('DOMContentLoaded', this.onReady);
         this.onReady({});
-        // document.querySelector('#loadAthletes').addEventListener('click',this.loadAthletes);
-        // this.grid = new Grid('#mygrid-test', this.gridOptions);
-        // document.querySelector('#loadAthletesDef').addEventListener('click',this.loadAthletesDef);
-        // document.querySelector('#loadFilesDef').addEventListener('click',this.loadFilesDef);
-        // document.querySelector('#loadFiles').addEventListener('click',this.loadGroup );         
     }
     onReady(event) {
         console.info('GridTest onReady')
