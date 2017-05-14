@@ -1,13 +1,4 @@
-/*
-/// <reference path="../libs/jquery.d.ts" />
-/// <reference path="../libs/numeraljs.d.ts" />
-/// <reference path="../libs/moment.d.ts" />
-/// <reference path="mygridDefs.ts" />
-*/
-// import {$} from 'jquery';
-// import {numeral} from 'numeraljs';
-// import * as moment from 'moment';
-// import {moment} from 'moment';
+
 declare var $: any;
 declare var numeral: any;
 declare var moment: any;
@@ -100,7 +91,6 @@ export class Grid {
 										innerHTMLs.push( '</div>' );
 									innerHTMLs.push( '</div>' );
 								innerHTMLs.push( '</div>' );									
-									
 							innerHTMLs.push( '</td>'	);
 						innerHTMLs.push( '</tr>'	);	
 					innerHTMLs.push( '</tbody>' );		
