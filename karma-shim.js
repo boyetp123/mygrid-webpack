@@ -32,7 +32,7 @@ appContext.keys().forEach(appContext);
 // Select BrowserDomAdapter.
 // see https://github.com/AngularClass/angular2-webpack-starter/issues/124
 // Somewhere in the test setup
-var testing = require('@angular/core/testing');
-var browser = require('@angular/platform-browser-dynamic/testing');
+// var testing = require('@angular/core/testing');
+// var browser = require('@angular/platform-browser-dynamic/testing');
 
-testing.TestBed.initTestEnvironment(browser.BrowserDynamicTestingModule, browser.platformBrowserDynamicTesting());
+// testing.TestBed.initTestEnvironment(browser.BrowserDynamicTestingModule, browser.platformBrowserDynamicTesting());

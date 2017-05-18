@@ -29,7 +29,7 @@ exports.config = {
     jasmine.getEnv().addReporter(new SpecReporter({displayStacktrace: true}));
 
     browser.ignoreSynchronization = true;
-  },
+  } //,
 
 
   /**
@@ -39,5 +39,5 @@ exports.config = {
    * `rootEl`
    *
    */
-  useAllAngular2AppRoots: true
+  // useAllAngular2AppRoots: true
 };
