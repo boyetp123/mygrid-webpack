@@ -1,6 +1,0 @@
-<h2>About</h2>
-
-<p>About page with nested route</p>
-<p><a [routerLink]="['/about']">About</a><span *ngFor="let item of items">, <a [routerLink]="['/about/item', item.id]">{{ item.name }}</a></span></p>
-
-<router-outlet></router-outlet>

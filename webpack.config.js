@@ -311,8 +311,8 @@ module.exports = function makeWebpackConfig() {
     quiet: true,
     stats: 'minimal', // none (or false), errors-only, minimal, normal (or true) and verbose
     proxy: {
-      '/needsservices/service/needs/life': {
-        target: 'https://isso.prudential.com/needsservices/service/needs/life',
+      'localhost:8080/test': {
+        target: 'localhost:8080/',
         changeOrigin: true,
         ignorePath: true,
         secure: false,
