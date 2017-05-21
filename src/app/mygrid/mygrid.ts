@@ -24,6 +24,7 @@ export class Grid {
 	bodyContainerYscrollCenter: any;	
 
 	theGridLeft: any;
+	headerLeftPane: any;
 	headerContainerLeft: any; 
 	headerContainerInnerLeft: any; 
 	tableHeaderLeft: any;
@@ -33,7 +34,7 @@ export class Grid {
 	tableBodyLeft: any;	
 	hasInitCcompleted: boolean;
 	
-	constructor(selector:string, gridOptions:GridOptions) {
+	constructor(selector:string, gridOptions:GridOptions ) {
 		this.hasInitCcompleted = false;
 		this.gridContainer = document.querySelector(selector);
 		this.setUpProperties(gridOptions)
@@ -61,6 +62,7 @@ export class Grid {
 											innerHTMLs.push( '<div class="mygrid-header-inner">' );
 												innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
 											innerHTMLs.push( '</div>' );
+										innerHTMLs.push( '</div>' );
 									innerHTMLs.push( '</div>' );
 								
 								innerHTMLs.push( '</td>' );
@@ -149,7 +151,8 @@ export class Grid {
 		this.gridBody = this.theGrid.querySelector('.mygrid-scroll-container-body');
 
 		// header left pane
-		this.headerContainerLeft = this.gridHeader.querySelector('.left-pane div.mygrid-header'); 
+		this.headerLeftPane = this.gridHeader.querySelector('.left-pane'); 
+		this.headerContainerLeft = this.headerLeftPane.querySelector('div.mygrid-header'); 
 		this.headerContainerInnerLeft = this.headerContainerLeft.querySelector('div.mygrid-header-inner'); 
 		this.tableHeaderLeft = this.headerContainerInnerLeft.querySelector('table > thead');
 
@@ -269,7 +272,9 @@ export class Grid {
 				}
 			},this);
 		}
+		console.info('arrLeft.length ',arrLeft.length , arrLeft)
 		if (arrLeft.length > 0) {
+			this.showElement(this.headerLeftPane);
 			this.tableHeaderLeft.innerHTML = '<tr>' + arrLeft.join('') + '</tr>';
 		} 
 		this.tableHeaderCenter.innerHTML = '<tr>' + arrCenter.join('') + '</tr>';
@@ -282,8 +287,8 @@ export class Grid {
 		}
 	}
 	createHeaderCell( colDef:ColumnDef, colIdx:number ){
-		let styleArr:Array<string>=[];
-		let classArr:Array<string>=[ GridHdrClasses.GRID_HDR_CELL ];
+		let styleArr: Array<string>= [];
+		let classArr: Array<string>= [ GridHdrClasses.GRID_HDR_CELL ];
 		let icons = this.gridOptions.icons;
 		let val = (colDef.headerName || colDef.field);
 	
@@ -306,7 +311,8 @@ export class Grid {
 		}
 		return '<th class="' + classArr.join(' ') + '" style="' +styleArr.join(';')+ '" col-idx="'+colIdx+'">'+
 					'<div style="' +styleArr.join(';')+ '" >'+ 
-						'<span>'+ val + '</span>' + '<span class="' + SortClasses.SORTABLE + '">' + icons.sortDescending + icons.sortAscending + '</span>' +
+						'<span>'+ val + '</span>' + '<span class="' + SortClasses.SORTABLE + '">' + 
+							icons.sortDescending + icons.sortAscending + '</span>' +
 					'</div>'+
 				'</th>';
 	}	
@@ -322,7 +328,8 @@ export class Grid {
 		if (isGrouped && isDataAlreadyGrouped && colIndex ===0){
 			let groupCollapsed = '<span class="group-collapse" style="display:'+ 
 				( !rowObj.expanded?'inline':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
-			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'inline':'none')+'">' + this.gridOptions.icons.groupExpanded + '</span>' ;
+			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'inline':'none')+'">' + 
+								this.gridOptions.icons.groupExpanded + '</span>' ;
 			groupedIcon = '<span class="grouped-icons">' + groupCollapsed + groupExpanded  + '</span>';
 		} 
 		if (colDef.width){
@@ -394,10 +401,12 @@ export class Grid {
 		},this);			
 		
 		if (arrCenter.length > 0){
-			returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
+			returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
+							'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
 		}
 		if (arrLeft.length > 0){
-			returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
+			returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
+							'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
 		}
 		return 	returnObj;	
 	}
