@@ -7,29 +7,31 @@ import {ColumnDef, GridOptions, SortClasses, DefaultFormats, rowObject,
 
 
 export class Grid {
-	gridContainer:any;
-	gridOptions:GridOptions;
-	tableBodyCenter:any;
-	tableHeaderCenter:any;
-	columnDefs:ColumnDef[];
-	theGrid:any;
-	theGridTdCenterPane:any;
-	theGridTdLeftPane:any;
-	theGridCenter:any;
-	headerContainerCenter:any;
-	headerContainerInnerCenter:any;
-	bodyContainerCenter:any;
-	bodyContainerYscrollCenter:any;	
+	gridContainer: any;
+	gridOptions: GridOptions;
+	tableBodyCenter: any;
+	tableHeaderCenter: any;
+	columnDefs: ColumnDef[];
+	theGrid: any;
+	gridHeader: any;
+	gridBody: any;
+	theGridTdCenterPane: any;
+	theGridTdLeftPane: any;
+	theGridCenter: any;
+	headerContainerCenter: any;
+	headerContainerInnerCenter: any;
+	bodyContainerCenter: any;
+	bodyContainerYscrollCenter: any;	
 
-	theGridLeft:any;
-	headerContainerLeft:any; 
-	headerContainerInnerLeft:any; 
-	tableHeaderLeft:any;
+	theGridLeft: any;
+	headerContainerLeft: any; 
+	headerContainerInnerLeft: any; 
+	tableHeaderLeft: any;
 	
-	bodyContainerLeft:any; 
-	bodyContainerYscrollLeft:any; 
-	tableBodyLeft:any;	
-	hasInitCcompleted:boolean;
+	bodyContainerLeft: any; 
+	bodyContainerYscrollLeft: any; 
+	tableBodyLeft: any;	
+	hasInitCcompleted: boolean;
 	
 	constructor(selector:string, gridOptions:GridOptions) {
 		this.hasInitCcompleted = false;
@@ -46,75 +48,129 @@ export class Grid {
 		this.hasInitCcompleted=true;
 	}
 	createGridContainers(){
-			let innerHTMLs = ['<div class="mygrid">' ];
-				innerHTMLs.push( '<table>' );
-					innerHTMLs.push( '<tbody>' );
-						innerHTMLs.push( '<tr>' );
-							innerHTMLs.push( '<td class="left-pane" style="display:none">' );
-								innerHTMLs.push( '<div class="mygrid-left">' );	
-									innerHTMLs.push( '<div class="mygrid-header">' );
-										innerHTMLs.push( '<div class="mygrid-header-inner">' );
-											innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+		let innerHTMLs = ['<div class="mygrid">' ];
+				innerHTMLs.push('<div class="mygrid-header">this is a header')
+
+					innerHTMLs.push( '<table>' );
+						innerHTMLs.push( '<tbody>' );
+							innerHTMLs.push( '<tr>' );
+								innerHTMLs.push( '<td class="left-pane" style="display:none">' );
+
+									innerHTMLs.push( '<div class="mygrid-left">' );	
+										innerHTMLs.push( '<div class="mygrid-header">' );
+											innerHTMLs.push( '<div class="mygrid-header-inner">' );
+												innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+											innerHTMLs.push( '</div>' );
+									innerHTMLs.push( '</div>' );
+								
+								innerHTMLs.push( '</td>' );
+								innerHTMLs.push( '<td class="center-pane">' );
+
+									innerHTMLs.push( '<div class="mygrid-center">' );	
+										innerHTMLs.push( '<div class="mygrid-header">' );
+											innerHTMLs.push( '<div class="mygrid-header-inner">' );
+												innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+											innerHTMLs.push( '</div>' );
 										innerHTMLs.push( '</div>' );
 									innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '<div class="mygrid-body">' );
-										innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
-											innerHTMLs.push( '<table><tbody></tbody></table>');
+
+								innerHTMLs.push( '</td>' );
+								innerHTMLs.push( '<td class="right-pane" style="display:none">' );
+									innerHTMLs.push( '<div class="mygrid-right">' );	
+										innerHTMLs.push( '<div class="mygrid-header">' );
+											innerHTMLs.push( '<div class="mygrid-header-inner">' );
+												innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+											innerHTMLs.push( '</div>' );
 										innerHTMLs.push( '</div>' );
 									innerHTMLs.push( '</div>' );
-								innerHTMLs.push( '</div>' );									
-							innerHTMLs.push( '</td>' );
-							innerHTMLs.push( '<td class="center-pane">' );
-								innerHTMLs.push( '<div class="mygrid-center">' );	
-									innerHTMLs.push( '<div class="mygrid-header">' );
-										innerHTMLs.push( '<div class="mygrid-header-inner">' );
-											innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+
+								innerHTMLs.push( '</td>' );
+							innerHTMLs.push( '</tr>' );
+						innerHTMLs.push( '</tbody>' );
+					innerHTMLs.push( '</table>' );
+
+				innerHTMLs.push('</div>')
+
+				innerHTMLs.push('<div class="mygrid-scroll-container-body">')
+					innerHTMLs.push( '<table>' );
+						innerHTMLs.push( '<tbody>' );
+							innerHTMLs.push( '<tr>' );
+								innerHTMLs.push( '<td class="left-pane" style="display:none">' );
+									innerHTMLs.push( '<div class="mygrid-left">' );	
+										// innerHTMLs.push( '<div class="mygrid-header">' );
+										// 	innerHTMLs.push( '<div class="mygrid-header-inner">' );
+										// 		innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+										// 	innerHTMLs.push( '</div>' );
+										// innerHTMLs.push( '</div>' );
+										innerHTMLs.push( '<div class="mygrid-body">' );
+											innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
+												innerHTMLs.push( '<table><tbody></tbody></table>');
+											innerHTMLs.push( '</div>' );
 										innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '<div class="mygrid-body">' );
-										innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
-											innerHTMLs.push( '<table><tbody></tbody></table>');
+									innerHTMLs.push( '</div>' );									
+								innerHTMLs.push( '</td>' );
+								innerHTMLs.push( '<td class="center-pane">' );
+									innerHTMLs.push( '<div class="mygrid-center">' );	
+										// innerHTMLs.push( '<div class="mygrid-header">' );
+										// 	innerHTMLs.push( '<div class="mygrid-header-inner">' );
+										// 		innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+										// 	innerHTMLs.push( '</div>' );
+										// innerHTMLs.push( '</div>' );
+										innerHTMLs.push( '<div class="mygrid-body">' );
+											innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
+												innerHTMLs.push( '<table><tbody></tbody></table>');
+											innerHTMLs.push( '</div>' );
 										innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '</div>' );
-								innerHTMLs.push( '</div>' );									
-							innerHTMLs.push( '</td>' );
-							innerHTMLs.push( '<td class="right-pane" style="display:none">' );
-								innerHTMLs.push( '<div class="mygrid-right">' );	
-									innerHTMLs.push( '<div class="mygrid-header">' );
-										innerHTMLs.push( '<div class="mygrid-header-inner">' );
-											innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+									innerHTMLs.push( '</div>' );									
+								innerHTMLs.push( '</td>' );
+								innerHTMLs.push( '<td class="right-pane" style="display:none">' );
+									innerHTMLs.push( '<div class="mygrid-right">' );	
+										// innerHTMLs.push( '<div class="mygrid-header">' );
+										// 	innerHTMLs.push( '<div class="mygrid-header-inner">' );
+										// 		innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
+										// 	innerHTMLs.push( '</div>' );
+										// innerHTMLs.push( '</div>' );
+										innerHTMLs.push( '<div class="mygrid-body">' );
+											innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
+												innerHTMLs.push( '<table><tbody></tbody></table>');
+											innerHTMLs.push( '</div>' );
 										innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '<div class="mygrid-body">' );
-										innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
-											innerHTMLs.push( '<table><tbody></tbody></table>');
-										innerHTMLs.push( '</div>' );
-									innerHTMLs.push( '</div>' );
-								innerHTMLs.push( '</div>' );									
-							innerHTMLs.push( '</td>'	);
-						innerHTMLs.push( '</tr>'	);	
-					innerHTMLs.push( '</tbody>' );		
-				innerHTMLs.push( '</table>' );
-			innerHTMLs.push( '</div>');		
+									innerHTMLs.push( '</div>' );									
+								innerHTMLs.push( '</td>'	);
+							innerHTMLs.push( '</tr>'	);	
+						innerHTMLs.push( '</tbody>' );		
+					innerHTMLs.push( '</table>' );
+				innerHTMLs.push( '</div>' );						
+		innerHTMLs.push( '</div>');	
+
 		this.gridContainer.innerHTML = innerHTMLs.join('');
 		this.theGrid = this.gridContainer.querySelector('div.mygrid');
-		// left pane
-		this.theGridTdLeftPane  = this.theGrid.querySelector('td.left-pane');
-		this.theGridLeft = this.theGridTdLeftPane.querySelector('div.mygrid-left');
-		this.headerContainerLeft = this.theGridLeft.querySelector('div.mygrid-header'); 
+		this.gridHeader = this.theGrid.querySelector('.mygrid-header');
+		this.gridBody = this.theGrid.querySelector('.mygrid-scroll-container-body');
+
+		// header left pane
+		this.headerContainerLeft = this.gridHeader.querySelector('.left-pane div.mygrid-header'); 
 		this.headerContainerInnerLeft = this.headerContainerLeft.querySelector('div.mygrid-header-inner'); 
 		this.tableHeaderLeft = this.headerContainerInnerLeft.querySelector('table > thead');
+
+
+		// header center pane
+		this.headerContainerCenter = this.gridHeader.querySelector('.center-pane div.mygrid-header'); 
+		this.headerContainerInnerCenter = this.headerContainerCenter.querySelector('div.mygrid-header-inner'); 
+		this.tableHeaderCenter = this.headerContainerInnerCenter.querySelector('table > thead');
+
+
+		// body left pane
+		this.theGridTdLeftPane  = this.gridBody.querySelector('td.left-pane');
+		this.theGridLeft = this.theGridTdLeftPane.querySelector('div.mygrid-left');
 		
 		this.bodyContainerLeft = this.theGridLeft.querySelector('div.mygrid-body'); 
 		this.bodyContainerYscrollLeft = this.bodyContainerLeft.querySelector('div.mygrid-body-y-scroll'); 
 		this.tableBodyLeft = this.bodyContainerYscrollLeft.querySelector('table > tbody');		
 		
-		// center pane
-		this.theGridTdCenterPane  = this.theGrid.querySelector('td.center-pane');
+		// body center pane
+		this.theGridTdCenterPane  = this.gridBody.querySelector('td.center-pane');
 		this.theGridCenter = this.theGridTdCenterPane.querySelector('div.mygrid-center');
-		this.headerContainerCenter = this.theGridCenter.querySelector('div.mygrid-header'); 
-		this.headerContainerInnerCenter = this.headerContainerCenter.querySelector('div.mygrid-header-inner'); 
-		this.tableHeaderCenter = this.headerContainerInnerCenter.querySelector('table > thead');
 		
 		this.bodyContainerCenter = this.theGridCenter.querySelector('div.mygrid-body'); 
 		this.bodyContainerYscrollCenter = this.bodyContainerCenter.querySelector('div.mygrid-body-y-scroll'); 
@@ -168,8 +224,10 @@ export class Grid {
 			groupCollapsed: icons.groupCollapsed || '<span>&gt;</span>', 
 			groupExpanded : icons.groupExpanded  || '<span>v</span>'
 		}
-		this.gridOptions.icons.sortDescending =  '<span class="'+ SortClasses.SORT_DESC +'" style="display:none">' + this.gridOptions.icons.sortDescending + '</span>';
-		this.gridOptions.icons.sortAscending =  '<span class="'+ SortClasses.SORT_ASC +'" style="display:none">' + this.gridOptions.icons.sortAscending + '</span>';
+		this.gridOptions.icons.sortDescending =  '<span class="'+ SortClasses.SORT_DESC +
+				'" style="display:none">' + this.gridOptions.icons.sortDescending + '</span>';
+		this.gridOptions.icons.sortAscending =  '<span class="'+ SortClasses.SORT_ASC +
+				'" style="display:none">' + this.gridOptions.icons.sortAscending + '</span>';
 	}
 	setUpAPI(){
 		this.gridOptions.api = {
@@ -215,10 +273,10 @@ export class Grid {
 			this.tableHeaderLeft.innerHTML = '<tr>' + arrLeft.join('') + '</tr>';
 		} 
 		this.tableHeaderCenter.innerHTML = '<tr>' + arrCenter.join('') + '</tr>';
-		// this.tableHeaderCenter.querySelectorAll('span.sort-descending').style.display = 'none';
 		
 		if (!this.gridOptions.disableVerticalScroll){
-			this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height = (this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight) + 'px';				
+			this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height = 
+				( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
 		} else {
 			this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height ='auto';
 		}
@@ -262,7 +320,8 @@ export class Grid {
 		let groupedIcon:string = "";
 
 		if (isGrouped && isDataAlreadyGrouped && colIndex ===0){
-			let groupCollapsed = '<span class="group-collapse" style="display:'+(!rowObj.expanded?'inline':'none')+'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
+			let groupCollapsed = '<span class="group-collapse" style="display:'+ 
+				( !rowObj.expanded?'inline':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
 			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'inline':'none')+'">' + this.gridOptions.icons.groupExpanded + '</span>' ;
 			groupedIcon = '<span class="grouped-icons">' + groupCollapsed + groupExpanded  + '</span>';
 		} 
@@ -481,7 +540,7 @@ export class Grid {
 		}
 	}
 	expandCollapseChildren(obj){
-		if(obj.isExpand){
+		if (obj.isExpand){
 			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem);
 			this.renderChildrenDataRows(row, obj.level + 1, obj.parentRowIndex);
 		} else {
@@ -515,21 +574,20 @@ export class Grid {
 		let currentTop = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
 		let bodyContainerYscrollLeft = this.bodyContainerYscrollLeft;
-		let onScrollEvent = function(event) {
-			let scrollLeft = event.currentTarget.scrollLeft;
-			let scrollTop = event.currentTarget.scrollTop;
+		// let onScrollEvent = function(event) {
+		// 	let scrollLeft = event.currentTarget.scrollLeft;
+		// 	let scrollTop = event.currentTarget.scrollTop;
 			
-			if ( currentLeft !== scrollLeft ){
-				currentLeft = scrollLeft;
-				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
-			}
-			if ( currentTop !== scrollTop ){
-				currentTop = scrollTop;
-				bodyContainerYscrollLeft.style.top = (scrollTop  * -1 ) + 'px';		
-				// console.info('scrollTop = ',scrollTop, bodyContainerYscrollLeft.scrollTop);
-			}				
-		}
-		this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
+		// 	if ( currentLeft !== scrollLeft ){
+		// 		currentLeft = scrollLeft;
+		// 		headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
+		// 	}
+		// 	if ( currentTop !== scrollTop ){
+		// 		currentTop = scrollTop;
+		// 		bodyContainerYscrollLeft.style.top = (scrollTop  * -1 ) + 'px';		
+		// 	}				
+		// }
+		// this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
 		let sortingDir = '';
 		let onClickHeader = function(event ){
 			let target = event.target;

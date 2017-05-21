@@ -2,7 +2,7 @@ div.mygrid{
 	overflow: hidden;	
 }
 
-div.mygrid > table > tbody > tr > td{
+div.mygrid  table > tbody > tr > td{
 	vertical-align: top;
 }
 
