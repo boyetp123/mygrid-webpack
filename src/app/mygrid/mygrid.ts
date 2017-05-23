@@ -287,8 +287,8 @@ export class Grid {
 		}
 	}
 	createHeaderCell( colDef:ColumnDef, colIdx:number ){
-		let styleArr: Array<string>= [];
-		let classArr: Array<string>= [ GridHdrClasses.GRID_HDR_CELL ];
+		let styleArr:Array<string> = [];
+		let classArr:Array<string> = [ GridHdrClasses.GRID_HDR_CELL ];
 		let icons = this.gridOptions.icons;
 		let val = (colDef.headerName || colDef.field);
 	
