@@ -2,9 +2,11 @@
 declare var $: any;
 declare var numeral: any;
 declare var moment: any;
-import {ColumnDef, GridOptions, SortClasses, DefaultFormats, rowObject, 
-		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
+// import {ColumnDef, GridOptions, SortClasses, DefaultFormats, rowObject, 
+// 		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
 
+import {ColumnDef, GridOptions, SortClasses, rowObject, 
+		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
 
 export class Grid {
 	gridContainer: any;
@@ -43,12 +45,12 @@ export class Grid {
 		this.render();
 		this.setUpAPI();
 		this.setEvents();
-		if (this.gridOptions.onReady){
+		if (this.gridOptions.onReady) {
 			this.gridOptions.onReady(this.gridOptions.api);
 		}
 		this.hasInitCcompleted=true;
 	}
-	createGridContainers(){
+	createGridContainers() {
 		let innerHTMLs = ['<div class="mygrid">' ];
 				innerHTMLs.push('<div class="mygrid-header">this is a header')
 
@@ -180,18 +182,19 @@ export class Grid {
 		this.tableBodyCenter = this.bodyContainerYscrollCenter.querySelector('table > tbody');
 		
 	}
-	setUpWidths(){
+	setUpWidths() {
+		let scrollerBarWidth = 8;
 		let gridOptions = this.gridOptions;		
-		this.theGrid.style.width = gridOptions.width || 'auto';
+		this.theGrid.style.width = ((parseInt(gridOptions.width) + scrollerBarWidth) + 'px') || 'auto';
 		this.theGrid.style.height = !gridOptions.disableVerticalScroll ?( this.gridOptions.height || 'auto') : 'auto';
-		let totalGridWidth = this.theGrid.offsetWidth;
+		let totalGridWidth = this.theGrid.offsetWidth - scrollerBarWidth;
 		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
 		
 		let totalLeftWidth = 0;		
-		if (pinnedLeftCount > 0 && this.columnDefs.length > 0 ){
+		if (pinnedLeftCount > 0 && this.columnDefs.length > 0 ) {
 			this.theGridTdLeftPane.style.display = '';
-			for(let i = 0; i <pinnedLeftCount ; i++){
+			for(let i = 0; i <pinnedLeftCount ; i++) {
 				totalLeftWidth = Number(this.columnDefs[i].width.replace('px','').replace('%',''));
 			}
 			this.theGridTdLeftPane.style.width =  (totalLeftWidth) + 'px';
@@ -205,7 +208,7 @@ export class Grid {
 		// this.bodyContainerCenter.style.width = (totalGridWidth - totalLeftWidth) + 'px';
 	
 	}
-	setUpProperties(gridOptions:GridOptions){
+	setUpProperties(gridOptions:GridOptions) {
 		let icons = gridOptions.icons || {sortDescending:null,sortAscending:null, groupCollapsed:null, groupExpanded:null};		
 		this.gridOptions = gridOptions;
 		this.gridOptions.rowData = gridOptions.rowData || [];				
@@ -232,15 +235,15 @@ export class Grid {
 		this.gridOptions.icons.sortAscending =  '<span class="'+ SortClasses.SORT_ASC +
 				'" style="display:none">' + this.gridOptions.icons.sortAscending + '</span>';
 	}
-	setUpAPI(){
+	setUpAPI() {
 		this.gridOptions.api = {
 			setDataRow : this.setDataRow.bind(this),
 			setColumnDefs : this.setColumnDefs.bind(this)
 		};		
 	}
-	setColumnDefs(colDefs:ColumnDef[]){
+	setColumnDefs(colDefs:ColumnDef[]) {
 		this.columnDefs=[];
-		this.columnDefs = colDefs.map(function(colDef:ColumnDef){
+		this.columnDefs = colDefs.map(function(colDef:ColumnDef) {
 			return new ColumnDef( colDef.field,
 						colDef.headerName , 
 						colDef.type ,
@@ -253,19 +256,19 @@ export class Grid {
 						colDef.cellClasses				
 					);
 		});
-		if (this.hasInitCcompleted){
+		if (this.hasInitCcompleted) {
 			this.setUpWidths();
 			this.render();
 		}
 	}	
-	createHeader(){
+	createHeader() {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;
 		
-		if (this.gridOptions.columnDefs){			
-			this.columnDefs.forEach((colDef, colIdx)=>{
-				if (pinnedLeftCount - 1 >= colIdx){
+		if (this.gridOptions.columnDefs) {			
+			this.columnDefs.forEach( (colDef, colIdx) => {
+				if (pinnedLeftCount - 1 >= colIdx) {
 					arrLeft.push( this.createHeaderCell(colDef, colIdx));					
 				} else {
 					arrCenter.push( this.createHeaderCell(colDef, colIdx));
@@ -279,16 +282,16 @@ export class Grid {
 		} 
 		this.tableHeaderCenter.innerHTML = '<tr>' + arrCenter.join('') + '</tr>';
 		
-		if (!this.gridOptions.disableVerticalScroll){
+		if (!this.gridOptions.disableVerticalScroll) {
 			// this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height = 
 			// 	( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
-			this.gridBody.style.height = ( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
+			this.gridBody.style.height = ( this.theGrid.offsetHeight - this.gridHeader.offsetHeight ) + 'px';
 		} else {
 			// this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height ='auto';
 			this.gridBody.style.height = this.bodyContainerCenter.style.height ='auto';
 		}
 	}
-	createHeaderCell( colDef:ColumnDef, colIdx:number ){
+	createHeaderCell( colDef:ColumnDef, colIdx:number ) {
 		let styleArr:Array<string> = [];
 		let classArr:Array<string> = [ GridHdrClasses.GRID_HDR_CELL ];
 		let icons = this.gridOptions.icons;
@@ -300,14 +303,14 @@ export class Grid {
 			colDef:colDef
 		};
 		
-		if (colDef.width){
+		if (colDef.width) {
 			styleArr.push('width:'+colDef.width + '');
 		}
 		classArr.push( HAlignmentClasses[colDef.type.toUpperCase() ] );
-		if (colDef.sortable){
+		if (colDef.sortable) {
 			classArr.push( SortClasses.SORTABLE  );
 		}
-		if (colDef.hasOwnProperty('headerCellFormatter') && typeof(colDef.headerCellFormatter) == 'function' ){
+		if (colDef.hasOwnProperty('headerCellFormatter') && typeof(colDef.headerCellFormatter) === 'function' ) {
 			val = colDef.headerCellFormatter(params);
 			classArr = params.classes;	
 		}
@@ -318,26 +321,26 @@ export class Grid {
 					'</div>'+
 				'</th>';
 	}	
-	createDataCell(rowObj:rowObject, colDef:ColumnDef, rowIndex:number, colIndex:number, isFirst:boolean){
+	createDataCell(rowObj:rowObject, colDef:ColumnDef, rowIndex:number, colIndex:number, isFirst:boolean) {
 		let row = rowObj.data || rowObj;
 		let val = row.hasOwnProperty(colDef.field)  ? row[ <string>colDef.field ]: '';
-		let styleArr:Array<string>=[];
-		let classArr:Array<string>=['grid-cell'];
-		let isGrouped = rowObj.group &&  this.gridOptions.isGrouped;
+		let styleArr:Array<string> = [];
+		let classArr:Array<string> = ['grid-cell'];
+		let isGrouped = rowObj.group && this.gridOptions.isGrouped;
 		let isDataAlreadyGrouped = this.gridOptions.isDataAlreadyGrouped;
-		let groupedIcon:string = "";
+		let groupedIcon = '';
 
-		if (isGrouped && isDataAlreadyGrouped && colIndex ===0){
+		if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
 			let groupCollapsed = '<span class="group-collapse" style="display:'+ 
 				( !rowObj.expanded?'inline':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
 			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'inline':'none')+'">' + 
 								this.gridOptions.icons.groupExpanded + '</span>' ;
 			groupedIcon = '<span class="grouped-icons">' + groupCollapsed + groupExpanded  + '</span>';
 		} 
-		if (colDef.width){
+		if (colDef.width) {
 			styleArr.push('width:'+colDef.width + '');
 		}
-		if (isFirst && this.gridOptions.rowHeight){
+		if (isFirst && this.gridOptions.rowHeight) {
 			styleArr.push('height:'+this.gridOptions.rowHeight);
 		}
 		classArr.push( HAlignmentClasses[colDef.type.toUpperCase() ]);
@@ -349,7 +352,7 @@ export class Grid {
 			colDef:colDef
 		};
 		// types		
-		if (colDef.hasOwnProperty('cellFormatter') && typeof(colDef.cellFormatter) == 'function' ){
+		if (colDef.hasOwnProperty('cellFormatter') && typeof(colDef.cellFormatter) === 'function' ) {
 			val = colDef.cellFormatter(params);
 			classArr = params.classes;
 		} else if (row.hasOwnProperty(colDef.field) ) {
@@ -363,7 +366,7 @@ export class Grid {
 		}
 		// cellclasses
 		if (colDef.hasOwnProperty('cellClasses') && colDef.cellClasses) {
-			if ( typeof(colDef.cellClasses) == 'function' ){
+			if ( typeof(colDef.cellClasses) === 'function' ) {
 				classArr.push(colDef.cellClasses( params ));
 			} else {
 				classArr.push(colDef.cellClasses);
@@ -375,23 +378,23 @@ export class Grid {
 					 '</div>'+
 				'</td>';
 	}
-	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number){
+	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number) {
 		let styleArr:Array<string> = [];
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
-		let returnObj:any={};
-		let rowStr:string='';
-		let isGrouped = this.gridOptions.isGrouped;
-		let isDataAlreadyGrouped = this.gridOptions.isDataAlreadyGrouped;
+		let returnObj:any = {};
+		let rowStr = '';
+		// let isGrouped = this.gridOptions.isGrouped;
+		// let isDataAlreadyGrouped = this.gridOptions.isDataAlreadyGrouped;
 	    let pid = row.childIndex + '' + row.level;
 
 		// row.parent = parentRowIndex === 0 ? null : 
 	
-		this.columnDefs.forEach((colDef, colIdx)=>{
+		this.columnDefs.forEach((colDef, colIdx) => {
 			// let rowData =  (isGrouped && isDataAlreadyGrouped ) ? row.data : row;
 			let rowData = row;
-			if (pinnedLeftCount - 1 >= colIdx ){
+			if (pinnedLeftCount - 1 >= colIdx ) {
 				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0);			
 				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0);			
 				arrLeft.push( rowStr );
@@ -402,44 +405,46 @@ export class Grid {
 			}
 		},this);			
 		
-		if (arrCenter.length > 0){
+		if (arrCenter.length > 0) {
 			returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
 							'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
 		}
-		if (arrLeft.length > 0){
+		if (arrLeft.length > 0) {
 			returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
 							'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
 		}
 		return 	returnObj;	
 	}
-	renderChildrenDataRows(rowData:any, rowGroupLevel:number, parentRowIndex:number){
+	renderChildrenDataRows(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
-		let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
-		rowData.children.forEach((row:any, rowIndex:number)=>{
+		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
+
+		rowData.children.forEach( (row:any, rowIndex:number) => {
 			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex);
 			// obj.pid = rowData.childIndex + '' + rowData.level;
-			if (obj.center){
+			if (obj.center) {
 				arrCenter.push(obj.center)
 			} 
-			if (obj.left){
+			if (obj.left) {
 				arrLeft.push(obj.left)
 			}
 		},this);	
 				
-		if (arrLeft.length > 0){
+		if (arrLeft.length > 0) {
 			$(this.tableBodyLeft).append( arrLeft.join('') );
 		}
 		$(this.tableBodyCenter).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after(arrCenter.join(''));
-		if (this.gridOptions.equalRowHeights === true){
+
+		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
 		// this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
 	}	
-	equalizeBodyHeights(){
+	equalizeBodyHeights() {
 		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
-		let tableBodyLeft = this.tableBodyLeft;
-		let tableBodyCenter = this.tableBodyCenter;
+		// let tableBodyLeft = this.tableBodyLeft;
+		// let tableBodyCenter = this.tableBodyCenter;
 		let centerColStartIdx=pinnedLeftCount;
 		let tdsLeft = Array.prototype.slice.call( this.tableBodyLeft.querySelectorAll('tbody > tr > td[col-idx="0"]') , 0 );
 		let tdsCenter = Array.prototype.slice.call(this.tableBodyCenter.querySelectorAll('tbody > tr > td[col-idx="'+centerColStartIdx+'"]'), 0);
@@ -447,13 +452,13 @@ export class Grid {
 		let len = tdsLeft.length;
 		let startTime = (new Date()).getTime();
 		
-		for(let i=0; i < len; i++){
+		for(let i=0; i < len; i++) {
 			let tdleft = tdsLeft[i];
 			let tdCenter = tdsCenter[i];
 			let lH = tdleft.offsetHeight ;
 			let cH = tdCenter.offsetHeight;
 			
-			if (tdleft && tdCenter && lH !== cH ){
+			if (tdleft && tdCenter && lH !== cH ) {
 				console.info('equalizing height');
 				let maxHeight = Math.max( cH , lH );
 				tdleft.style.height =  tdCenter.style.height = maxHeight + 'px';
@@ -464,17 +469,17 @@ export class Grid {
 		
 		console.info('using array total time for ' + len + ' records ' + ( (endTime - startTime)/1000 ) + ' secs');
 	}
-	sortData(field:string, sortDir:string){
-		let sortFun=function(a,b){
+	sortData(field:string, sortDir:string) {
+		let sortFun=function(a,b) {
 			let retval = 0;
-			if (sortDir == 'asc'){
-				if (a[field] > b[field]){
+			if (sortDir === 'asc') {
+				if (a[field] > b[field]) {
 					retval = 1;
 				} else if (a[field] < b[field]) {
 					retval = -1;
 				} 
 			} else {
-				if (a[field] > b[field]){
+				if (a[field] > b[field]) {
 					retval = -1;
 				} else if (a[field] < b[field]) {
 					retval = 1;
@@ -486,27 +491,30 @@ export class Grid {
 		let rowData = this.gridOptions.rowData.sort( (a,b) => sortFun(a,b)  ); 
 		this.createBodyData(rowData, 0, 0);
 	}
-	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number){
+	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
-		let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
+		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
 		// let rowData = this.gridOptions.rowData.slice(0,200);
 		// let len  = rowData.length;
-		rowData.forEach((row:any, rowIndex:number)=>{
+		rowData.forEach( (row:any, rowIndex:number) => {
 			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex);
-			if (obj.center){
+
+			if (obj.center) {
 				arrCenter.push(obj.center)
 			} 
-			if (obj.left){
+			if (obj.left) {
 				arrLeft.push(obj.left)
 			}
 		},this);	
 				
-		if (arrLeft.length > 0){
+		if (arrLeft.length > 0) {
 			this.tableBodyLeft.innerHTML =arrLeft.join('');
 		}
+
 		this.tableBodyCenter.innerHTML =arrCenter.join('');
-		if (this.gridOptions.equalRowHeights === true){
+
+		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
 		// console.info('bodyContainerCenter scrolWidth',this.bodyContainerCenter.scrollWidth,
@@ -519,9 +527,9 @@ export class Grid {
 		// 	'clientWidth',this.theGridCenter.clientWidth);
 			
 	}
-	alignHeadersAndDataCells(){		
-		this.columnDefs.forEach((columnDef, idx, arr)=>{
-			if (columnDef.width === 'auto'){
+	alignHeadersAndDataCells() {		
+		this.columnDefs.forEach( (columnDef, idx, arr) => {
+			if (columnDef.width === 'auto') {
 				let th = this.tableHeaderCenter.querySelector('th[col-idx="'+idx+'"]');
 				let td = this.tableBodyCenter.querySelector('td[col-idx="'+idx+'"]');
 				td.style.width = th.style.width ='auto';
@@ -531,15 +539,15 @@ export class Grid {
 			}
 		});	
 	}
-	render(){
+	render() {
 		this.createHeader();
-		if (this.gridOptions.rowData.length > 0){
+		if (this.gridOptions.rowData.length > 0) {
 			this.createBodyData(this.gridOptions.rowData, 0, 0);		
 			this.alignHeadersAndDataCells();
 		}
 	}
-	getRowDataObj(level, rowIndex, parentRowIndex, trDomElem){
-		if (level === 0){
+	getRowDataObj(level, rowIndex, parentRowIndex, trDomElem) {
+		if (level === 0) {
 			return this.gridOptions.rowData[rowIndex];
 		} else {
 			let $tr = $(trDomElem).parents('tr');
@@ -550,29 +558,30 @@ export class Grid {
 			return ( this.getRowDataObj(level, rIndex, prIndex, $tr[0]) );
 		}
 	}
-	expandCollapseChildren(obj){
-		if (obj.isExpand){
+	expandCollapseChildren(obj) {
+		if (obj.isExpand) {
 			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem);
 			this.renderChildrenDataRows(row, obj.level + 1, obj.parentRowIndex);
 		} else {
 			this.removeChildrenDataRows();
 		}
 	}
-	removeChildrenDataRows(){
+	removeChildrenDataRows() {
 
 	}
-	processData(rows, parentNode, level){
-		rows.forEach(function(row,idx){
+	processData(rows, parentNode, level) {
+		rows.forEach(function(row,idx) {
 			row.parent = parentNode;
 			row.level = level;
 			row.childIndex = idx;
-			if ( typeof(row.children) != 'undefined' &&  row.children instanceof Array ){
+
+			if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
 				this.processData(row.children, row, level + 1);
 			}
 		},this);
 	}
-	setDataRow(dataRow){
-		if (dataRow.length > 0){			
+	setDataRow(dataRow) {
+		if (dataRow.length > 0) {			
 			// this.gridOptions.rowData = dataRow;
 			this.gridOptions.rowData = dataRow.slice(0,200) ;
 			this.processData(this.gridOptions.rowData, null, 0);
@@ -580,43 +589,47 @@ export class Grid {
 			this.alignHeadersAndDataCells();
 		}
 	}
-	setEvents(){
+	setEvents() {
 		let currentLeft = 0;
-		let currentTop = 0;
+		// let currentTop = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
-		let bodyContainerYscrollLeft = this.bodyContainerYscrollLeft;
+		// let bodyContainerYscrollLeft = this.bodyContainerYscrollLeft;
 		let onScrollEvent = function(event) {
+
 			let scrollLeft = event.currentTarget.scrollLeft;
-			let scrollTop = event.currentTarget.scrollTop;
+			// let scrollTop = event.currentTarget.scrollTop;
 			
-			if ( currentLeft !== scrollLeft ){
+			if ( currentLeft !== scrollLeft ) {
 				currentLeft = scrollLeft;
 				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
 			}
-			// if ( currentTop !== scrollTop ){
+			// if ( currentTop !== scrollTop ) {
 			// 	currentTop = scrollTop;
 			// 	bodyContainerYscrollLeft.style.top = (scrollTop  * -1 ) + 'px';		
 			// }				
 		}
 		this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
 		let sortingDir = '';
-		let onClickHeader = function(event ){
+
+		let onClickHeader = function(event ) {
 			let target = event.target;
 			let th = $(target).parents('th')[0];
 			let colIdx = Number(th.getAttribute('col-idx'));
 			let columnDef = this.columnDefs[colIdx];
-			sortingDir = sortingDir == 'asc' ? 'desc' : 'asc';
-			if (columnDef.sortable){
+			sortingDir = sortingDir === 'asc' ? 'desc' : 'asc';
+
+			if (columnDef.sortable) {
 				console.info('start sorting=' + columnDef.field +'; dir = ' + sortingDir);
 				let ascDesc = '.' + SortClasses.SORT_ASC +', .' +  SortClasses.SORT_DESC;
 				$(this.headerContainerInnerLeft).find(ascDesc).hide();
 				$(this.headerContainerInnerCenter).find(ascDesc).hide();
 
-				if (this.gridOptions.onSort){
+				if (this.gridOptions.onSort) {
 					this.gridOptions.onSort(columnDef.field,sortingDir);
 				} else {
 					this.sortData(columnDef.field,sortingDir);
-					if (sortingDir === 'asc'){
+
+					if (sortingDir === 'asc') {
 						$(th).find('.' + SortClasses.SORT_ASC ).show();
 					} else {
 						$(th).find('.' + SortClasses.SORT_DESC).show();						
@@ -631,40 +644,41 @@ export class Grid {
 		this.headerContainerInnerLeft.addEventListener("click",onClickHeader.bind(this));
 		this.headerContainerInnerCenter.addEventListener("click",onClickHeader.bind(this));
 	}
-	showElement(el){
-		if (el){
+	showElement(el) {
+		if (el) {
 			el.style.display = '';
 		}
 	}
-	hideElement(el){
-		if (el){
+	hideElement(el) {
+		if (el) {
 			el.style.display = 'none';
 		}		
 	}
 	parent( elem, until ) {
 		until = until || '';
-		if (elem && (elem.tagName || '').toUpperCase() === until.toUpperCase() ){
+		if (elem && (elem.tagName || '').toUpperCase() === until.toUpperCase() ) {
 			return elem;
-		} else if (elem && elem.parentNode){
+		} else if (elem && elem.parentNode) {
 			return this.parent(elem.parentNode, until);
 		}
 		return null;
 	}
-	onBodyClick(event){
+	onBodyClick(event) {
 		let target = event.target;
-		if (target){
+
+		if (target) {
 			let $target = $(target);
 			let $tr = $(target).parents('tr');
 			// let tr = this.parent(target,'tr');
-			if ($target.parents('span.grouped-icons').length > 0  ){
+			if ($target.parents('span.grouped-icons').length > 0  ) {
 				let p = target.parentNode;
 				let p2  = p.parentNode;
 				let isExpand = false;
-				if (p.classList.contains('group-collapse') || target.classList.contains('group-collapse') ){ // to expand
+				if (p.classList.contains('group-collapse') || target.classList.contains('group-collapse') ) { // to expand
 					this.hideElement(p2.querySelector('.group-collapse'));
 					this.showElement(p2.querySelector('.group-expand'));
 					isExpand=true;
-				} else if (p.classList.contains('group-expand') || target.classList.contains('group-expand') ){ // to collapsed
+				} else if (p.classList.contains('group-expand') || target.classList.contains('group-expand') ) { // to collapsed
 					this.showElement(p2.querySelector('.group-collapse'));
 					this.hideElement(p2.querySelector('.group-expand'));
 					isExpand=false;
