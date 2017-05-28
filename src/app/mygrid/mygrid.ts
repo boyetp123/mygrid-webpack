@@ -585,20 +585,20 @@ export class Grid {
 		let currentTop = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
 		let bodyContainerYscrollLeft = this.bodyContainerYscrollLeft;
-		// let onScrollEvent = function(event) {
-		// 	let scrollLeft = event.currentTarget.scrollLeft;
-		// 	let scrollTop = event.currentTarget.scrollTop;
+		let onScrollEvent = function(event) {
+			let scrollLeft = event.currentTarget.scrollLeft;
+			let scrollTop = event.currentTarget.scrollTop;
 			
-		// 	if ( currentLeft !== scrollLeft ){
-		// 		currentLeft = scrollLeft;
-		// 		headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
-		// 	}
-		// 	if ( currentTop !== scrollTop ){
-		// 		currentTop = scrollTop;
-		// 		bodyContainerYscrollLeft.style.top = (scrollTop  * -1 ) + 'px';		
-		// 	}				
-		// }
-		// this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
+			if ( currentLeft !== scrollLeft ){
+				currentLeft = scrollLeft;
+				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
+			}
+			// if ( currentTop !== scrollTop ){
+			// 	currentTop = scrollTop;
+			// 	bodyContainerYscrollLeft.style.top = (scrollTop  * -1 ) + 'px';		
+			// }				
+		}
+		this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
 		let sortingDir = '';
 		let onClickHeader = function(event ){
 			let target = event.target;
