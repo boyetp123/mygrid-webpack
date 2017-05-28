@@ -2,6 +2,10 @@ div.mygrid{
 	overflow: hidden;	
 }
 
+div.mygrid div.mygrid-scroll-container-body {
+	overflow-y: scroll;
+}
+
 div.mygrid  table > tbody > tr > td{
 	vertical-align: top;
 }

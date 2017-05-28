@@ -197,12 +197,12 @@ export class Grid {
 			this.theGridTdLeftPane.style.width =  (totalLeftWidth) + 'px';
 			this.theGridLeft.style.width =  (totalLeftWidth) + 'px';
 			this.headerContainerLeft.style.width =  (totalLeftWidth) + 'px';
-			this.bodyContainerLeft.style.width = (totalLeftWidth) + 'px';
+			// this.bodyContainerLeft.style.width = (totalLeftWidth) + 'px';
 		}
 		this.theGridTdCenterPane.style.width =  (totalLeftWidth) + 'px';
 		this.theGridCenter.style.width =  (totalGridWidth - totalLeftWidth) + 'px';
 		this.headerContainerCenter.style.width =  (totalGridWidth - totalLeftWidth) + 'px';
-		this.bodyContainerCenter.style.width = (totalGridWidth - totalLeftWidth) + 'px';
+		// this.bodyContainerCenter.style.width = (totalGridWidth - totalLeftWidth) + 'px';
 	
 	}
 	setUpProperties(gridOptions:GridOptions){
@@ -280,10 +280,12 @@ export class Grid {
 		this.tableHeaderCenter.innerHTML = '<tr>' + arrCenter.join('') + '</tr>';
 		
 		if (!this.gridOptions.disableVerticalScroll){
-			this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height = 
-				( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
+			// this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height = 
+			// 	( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
+			this.gridBody.style.height = ( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
 		} else {
-			this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height ='auto';
+			// this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height ='auto';
+			this.gridBody.style.height = this.bodyContainerCenter.style.height ='auto';
 		}
 	}
 	createHeaderCell( colDef:ColumnDef, colIdx:number ){
@@ -432,7 +434,7 @@ export class Grid {
 		if (this.gridOptions.equalRowHeights === true){
 			this.equalizeBodyHeights();
 		}
-		this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
+		// this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
 	}	
 	equalizeBodyHeights(){
 		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
@@ -510,7 +512,7 @@ export class Grid {
 		// console.info('bodyContainerCenter scrolWidth',this.bodyContainerCenter.scrollWidth,
 		// 	'offsetWidth',this.bodyContainerCenter.offsetWidth,
 		// 	'clientWidth',this.bodyContainerCenter.clientWidth);
-		this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
+		// this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
 
 		// console.info('theGridCenter scrolWidth',this.theGridCenter.scrollWidth,
 		// 	'offsetWidth',this.theGridCenter.offsetWidth,
