@@ -34,7 +34,7 @@ export let HAlignmentClasses = {
 	DATETIME : 'text-center'
 };
 
-export let GridHdrClasses ={
+export let GridHdrClasses = {
 	GRID_HDR_CELL : 'grid-hdr-cell'
 };
 
@@ -52,7 +52,7 @@ export let DefaultFormats = Object.freeze({
 	DATETIME :'MM/DD/YYYY h:mm:ss'	
 });
 
-export interface IIcons{
+export interface IIcons {
 	sortDescending:string,
 	sortAscending:string,
 	groupCollapsed:string, 
@@ -82,34 +82,34 @@ export interface GridOptions {
 }
 
 export interface rowObject {
-	data:any,
+	data: any,
 	group: boolean,
 	expanded: boolean,
 	children: Array<Object>,
-	parent:any
+	parent: any
 }
 export class ColumnDef {
 	field: string;
 	headerName: string; 
 	type:string='text';
-	format:string;
-	cellFormatter:Function;
-	headerCellFormatter:Function;
-	sortable:boolean;
-	width :string='auto';    // string like '100px' or '100%' or auto
-	headerClasses:any;  // string or function that return string
-	cellClasses:any;   // string or function that return string
+	format: string;
+	cellFormatter: Function;
+	headerCellFormatter: Function;
+	sortable: boolean;
+	width: string='auto';    // string like '100px' or '100%' or auto
+	headerClasses: any;  // string or function that return string
+	cellClasses: any;   // string or function that return string
 		
 	constructor(field: string,	
-				headerName: string, 
-				type:string='text', 
-				format?:string, 
-				cellFormatter:Function=null, 
-				headerCellFormatter:Function=null,
-				sortable:boolean=false,
-				width:string='auto',   
-				headerClasses?:any, 
-				cellClasses?:any){
+				headerName:string, 
+				type = 'text', 
+				format?: string, 
+				cellFormatter: Function=null, 
+				headerCellFormatter: Function=null,
+				sortable:boolean = false,
+				width = 'auto',   
+				headerClasses?: any, 
+				cellClasses?: any) {
 		this.field = field;
 		this.headerName = headerName; 
 		this.type = type;

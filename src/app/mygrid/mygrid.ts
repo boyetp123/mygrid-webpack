@@ -45,6 +45,7 @@ export class Grid {
 		this.render();
 		this.setUpAPI();
 		this.setEvents();
+
 		if (this.gridOptions.onReady) {
 			this.gridOptions.onReady(this.gridOptions.api);
 		}
@@ -491,6 +492,14 @@ export class Grid {
 		let rowData = this.gridOptions.rowData.sort( (a,b) => sortFun(a,b)  ); 
 		this.createBodyData(rowData, 0, 0);
 	}
+	removeData(startRow: number = 0, endRow: number = 0) {
+		if (startRow === 0 && endRow === 0){
+			this.tableBodyLeft.innerHTML = '';
+			this.tableBodyCenter.innerHTML = '';			
+		} else {
+
+		}
+	}
 	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
@@ -509,10 +518,10 @@ export class Grid {
 		},this);	
 				
 		if (arrLeft.length > 0) {
-			this.tableBodyLeft.innerHTML =arrLeft.join('');
+			this.tableBodyLeft.innerHTML += arrLeft.join('');
 		}
 
-		this.tableBodyCenter.innerHTML =arrCenter.join('');
+		this.tableBodyCenter.innerHTML += arrCenter.join('');
 
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
@@ -527,13 +536,14 @@ export class Grid {
 		// 	'clientWidth',this.theGridCenter.clientWidth);
 			
 	}
-	alignHeadersAndDataCells() {		
+	alignHeadersAndDataCells() {
+
 		this.columnDefs.forEach( (columnDef, idx, arr) => {
+
 			if (columnDef.width === 'auto') {
 				let th = this.tableHeaderCenter.querySelector('th[col-idx="'+idx+'"]');
 				let td = this.tableBodyCenter.querySelector('td[col-idx="'+idx+'"]');
 				td.style.width = th.style.width ='auto';
-				
 				let maxWidth = Math.max(th.offsetWdth, td.offsetWdth);
 				td.style.width = th.style.width = maxWidth + 'px';
 			}
@@ -552,10 +562,10 @@ export class Grid {
 		} else {
 			let $tr = $(trDomElem).parents('tr');
 			let $tr1 = $($tr[0]);
-			let level = Number($tr1.attr('lvl') || '0');
+			let lvl = Number($tr1.attr('lvl') || '0');
 			let rIndex = Number($tr1.attr('r-idx') || '0');
 			let prIndex = Number($tr1.attr('pr-idx') || '0');
-			return ( this.getRowDataObj(level, rIndex, prIndex, $tr[0]) );
+			return ( this.getRowDataObj(lvl, rIndex, prIndex, $tr[0]) );
 		}
 	}
 	expandCollapseChildren(obj) {
@@ -584,6 +594,7 @@ export class Grid {
 		if (dataRow.length > 0) {			
 			// this.gridOptions.rowData = dataRow;
 			this.gridOptions.rowData = dataRow.slice(0,200) ;
+			this.removeData(0,0);
 			this.processData(this.gridOptions.rowData, null, 0);
 			this.createBodyData(this.gridOptions.rowData, 0, 0);		
 			this.alignHeadersAndDataCells();
