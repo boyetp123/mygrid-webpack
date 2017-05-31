@@ -492,12 +492,13 @@ export class Grid {
 		let rowData = this.gridOptions.rowData.sort( (a,b) => sortFun(a,b)  ); 
 		this.createBodyData(rowData, 0, 0);
 	}
-	removeData(startRow: number = 0, endRow: number = 0) {
-		if (startRow === 0 && endRow === 0){
+	removeData(startRow = 0, endRow = 0) {
+		if (startRow === 0 && endRow === 0) {
+			this.gridOptions.rowData = [];
 			this.tableBodyLeft.innerHTML = '';
 			this.tableBodyCenter.innerHTML = '';			
 		} else {
-
+			// remove the rows here
 		}
 	}
 	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
@@ -593,8 +594,8 @@ export class Grid {
 	setDataRow(dataRow) {
 		if (dataRow.length > 0) {			
 			// this.gridOptions.rowData = dataRow;
-			this.gridOptions.rowData = dataRow.slice(0,200) ;
-			this.removeData(0,0);
+			this.removeData(0, 0);
+			this.gridOptions.rowData = dataRow; //.slice(0,200) ;
 			this.processData(this.gridOptions.rowData, null, 0);
 			this.createBodyData(this.gridOptions.rowData, 0, 0);		
 			this.alignHeadersAndDataCells();

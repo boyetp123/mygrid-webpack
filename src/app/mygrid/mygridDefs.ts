@@ -106,7 +106,7 @@ export class ColumnDef {
 				format?: string, 
 				cellFormatter: Function=null, 
 				headerCellFormatter: Function=null,
-				sortable:boolean = false,
+				sortable = false,
 				width = 'auto',   
 				headerClasses?: any, 
 				cellClasses?: any) {
