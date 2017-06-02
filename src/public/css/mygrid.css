@@ -94,8 +94,6 @@ div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr:nth-
 	background-color:lightblue;
 }
 
-
-
 div.mygrid div.mygrid-header th.sortable{
 	cursor: pointer;
 }
@@ -109,5 +107,3 @@ div.mygrid div.mygrid-header th.sortable{
 .text-center{
 	text-align: center;		
 }
-
-

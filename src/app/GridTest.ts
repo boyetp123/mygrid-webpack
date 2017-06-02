@@ -1,5 +1,5 @@
-import {Grid} from './mygrid/mygrid';
-// import {Observable} from 'rxjs';
+import {Grid } from './mygrid/mygrid';
+import {Observable } from 'rxjs';
 
 // declare var console: any;
 
@@ -54,7 +54,7 @@ export class GridTest {
         fetch('/data/olympicAthletes.json')
         .then(response => response.json())
         .then(function(data) {
-            that.gridOptions.api.setDataRow(data.data);
+            that.gridOptions.api.setDataRow(data.data.slice(0,200) );
         }).catch(err => {
             console.error('fail',err);
         });
@@ -62,14 +62,14 @@ export class GridTest {
     loadAthletesDef() {
         this.gridOptions.isGrouped = false;
         this.gridOptions.isDataAlreadyGrouped = false;
-        this.gridOptions.api.setColumnDefs(this.atheleteColumnDefs);
-        this.gridOptions.pinnedLeftCount=1;
+        this.gridOptions.api.setColumnDefs(this.atheleteColumnDefs );
+        this.gridOptions.pinnedLeftCount = 1;
     }
     loadGroup() {
         fetch('/data/group.json')
         .then(response => {
             console.log('sucess');
-            // this.gridOptions.api.setDataRow(response.json());
+            this.gridOptions.api.setDataRow(response.json());
         }).catch(err => {
             console.log('fail');
         });
