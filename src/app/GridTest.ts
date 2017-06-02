@@ -49,12 +49,10 @@ export class GridTest {
         this.grid = new Grid('#mygrid-test', this.gridOptions);
     }
     loadAthletes() {
-        let that: any = this;
-        // let req = new Request('/data/olympicAthletes.json')
         fetch('/data/olympicAthletes.json')
         .then(response => response.json())
-        .then(function(data) {
-            that.gridOptions.api.setDataRow(data.data.slice(0,200) );
+        .then(data => {
+            this.gridOptions.api.setDataRow(data.data.slice(0,200) );
         }).catch(err => {
             console.error('fail',err);
         });
@@ -67,10 +65,11 @@ export class GridTest {
     }
     loadGroup() {
         fetch('/data/group.json')
-        .then(response => {
-            console.log('sucess');
-            this.gridOptions.api.setDataRow(response.json());
-        }).catch(err => {
+        .then(response => response.json() )
+        .then(data => {
+            this.gridOptions.api.setDataRow(data.data);
+        } )
+        .catch(err => {
             console.log('fail');
         });
     }
