@@ -504,11 +504,10 @@ export class Grid {
 	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
-		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
-		// let rowData = this.gridOptions.rowData.slice(0,200);
-		// let len  = rowData.length;
+		let startRowIndex = this.gridOptions.rowData.length;
+
 		rowData.forEach( (row:any, rowIndex:number) => {
-			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex);
+			let obj = this.createDataRow(row, startRowIndex + rowIndex, rowGroupLevel, parentRowIndex);
 
 			if (obj.center) {
 				arrCenter.push(obj.center)
@@ -516,7 +515,7 @@ export class Grid {
 			if (obj.left) {
 				arrLeft.push(obj.left)
 			}
-		},this);	
+		});	
 				
 		if (arrLeft.length > 0) {
 			this.tableBodyLeft.innerHTML += arrLeft.join('');
@@ -527,14 +526,6 @@ export class Grid {
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
-		// console.info('bodyContainerCenter scrolWidth',this.bodyContainerCenter.scrollWidth,
-		// 	'offsetWidth',this.bodyContainerCenter.offsetWidth,
-		// 	'clientWidth',this.bodyContainerCenter.clientWidth);
-		// this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
-
-		// console.info('theGridCenter scrolWidth',this.theGridCenter.scrollWidth,
-		// 	'offsetWidth',this.theGridCenter.offsetWidth,
-		// 	'clientWidth',this.theGridCenter.clientWidth);
 			
 	}
 	alignHeadersAndDataCells() {
@@ -581,23 +572,45 @@ export class Grid {
 
 	}
 	processData(rows, parentNode, level) {
-		rows.forEach(function(row,idx) {
+		// rows.forEach(function(row,idx) {
+		// 	row.parent = parentNode;
+		// 	row.level = level;
+		// 	row.childIndex = idx;
+
+		// 	if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
+		// 		this.processData(row.children, row, level + 1);
+		// 	}
+		// },this);
+
+		return rows.map((row, idx) => {
 			row.parent = parentNode;
 			row.level = level;
 			row.childIndex = idx;
 
 			if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
-				this.processData(row.children, row, level + 1);
+				return this.processData(row.children, row, level + 1);
+			} else {
+				return row;
 			}
-		},this);
+		});
+
 	}
 	setDataRow(dataRow) {
 		if (dataRow.length > 0) {			
 			// this.gridOptions.rowData = dataRow;
 			this.removeData(0, 0);
-			this.gridOptions.rowData = dataRow; //.slice(0,200) ;
-			this.processData(this.gridOptions.rowData, null, 0);
-			this.createBodyData(this.gridOptions.rowData, 0, 0);		
+			// this.gridOptions.rowData = dataRow; //.slice(0,200) ;	
+			let processedRows = this.processData(dataRow, null, 0);
+			this.createBodyData(processedRows, 0, 0);
+			this.gridOptions.rowData =  processedRows
+			this.alignHeadersAndDataCells();
+		}
+	}
+	appenDataRow(dataRow) {
+		if (dataRow.length > 0) {
+			let addedRows = this.processData(dataRow, null, 0);
+			this.createBodyData( addedRows, 0, 0);		
+			this.gridOptions.rowData =  this.gridOptions.rowData.concat( );
 			this.alignHeadersAndDataCells();
 		}
 	}
