@@ -2,6 +2,7 @@ import {Grid } from './mygrid/mygrid';
 import {Observable } from 'rxjs';
 
 // declare var console: any;
+declare var fetch: any;
 
 export class GridTest {
     atheleteColumnDefs: any = [

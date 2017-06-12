@@ -326,6 +326,7 @@ export class Grid {
 		let row = rowObj.data || rowObj;
 		let val = row.hasOwnProperty(colDef.field)  ? row[ <string>colDef.field ]: '';
 		let styleArr:Array<string> = [];
+		let styleArrDiv:Array<string> = [];
 		let classArr:Array<string> = ['grid-cell'];
 		let isGrouped = rowObj.group && this.gridOptions.isGrouped;
 		let isDataAlreadyGrouped = this.gridOptions.isDataAlreadyGrouped;
@@ -340,6 +341,7 @@ export class Grid {
 		} 
 		if (colDef.width) {
 			styleArr.push('width:'+colDef.width + '');
+			styleArrDiv.push('width:'+colDef.width + '');
 		}
 		if (isFirst && this.gridOptions.rowHeight) {
 			styleArr.push('height:'+this.gridOptions.rowHeight);
@@ -528,7 +530,7 @@ export class Grid {
 		}
 			
 	}
-	alignHeadersAndDataCells() {
+	alignHeadersAndDataCellsColumnWidths() {
 
 		this.columnDefs.forEach( (columnDef, idx, arr) => {
 
@@ -541,11 +543,14 @@ export class Grid {
 			}
 		});	
 	}
+	alignDataRowHeights(){
+		
+	}
 	render() {
 		this.createHeader();
 		if (this.gridOptions.rowData.length > 0) {
 			this.createBodyData(this.gridOptions.rowData, 0, 0);		
-			this.alignHeadersAndDataCells();
+			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
 	getRowDataObj(level, rowIndex, parentRowIndex, trDomElem) {
@@ -603,7 +608,7 @@ export class Grid {
 			let processedRows = this.processData(dataRow, null, 0);
 			this.createBodyData(processedRows, 0, 0);
 			this.gridOptions.rowData =  processedRows
-			this.alignHeadersAndDataCells();
+			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
 	appenDataRow(dataRow) {
@@ -611,7 +616,7 @@ export class Grid {
 			let addedRows = this.processData(dataRow, null, 0);
 			this.createBodyData( addedRows, 0, 0);		
 			this.gridOptions.rowData =  this.gridOptions.rowData.concat( );
-			this.alignHeadersAndDataCells();
+			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
 	setEvents() {
