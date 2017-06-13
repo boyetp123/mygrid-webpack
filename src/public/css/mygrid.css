@@ -19,7 +19,29 @@ div.mygrid  table, div.mygrid table tbody, div.mygrid table td,  div.mygrid tabl
 }
 div.mygrid  table .grouped-icons{
 	cursor: pointer;
+	width: 20px;
+	display: inline-block;
 }
+
+div.mygrid  table .grouped-icons .group-collapse {
+	width: 0;
+	height: 0;
+	border-top: 5px solid transparent;
+	border-left: 10px solid red;
+	border-bottom: 5px solid transparent;
+	display: inline-block;
+}
+div.mygrid  table .grouped-icons .group-expand {
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 10px solid red;
+	display: inline-block;
+}
+
+
+
 div.mygrid > table{
 	width:100%;
 	border-collapse: collapse;

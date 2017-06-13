@@ -159,7 +159,6 @@ export class Grid {
 		this.headerContainerInnerLeft = this.headerContainerLeft.querySelector('div.mygrid-header-inner'); 
 		this.tableHeaderLeft = this.headerContainerInnerLeft.querySelector('table > thead');
 
-
 		// header center pane
 		this.headerContainerCenter = this.gridHeader.querySelector('.center-pane div.mygrid-header'); 
 		this.headerContainerInnerCenter = this.headerContainerCenter.querySelector('div.mygrid-header-inner'); 
@@ -183,7 +182,7 @@ export class Grid {
 		this.tableBodyCenter = this.bodyContainerYscrollCenter.querySelector('table > tbody');
 		
 	}
-	setUpWidths() {
+	setUpWidths(): void {
 		let scrollerBarWidth = 8;
 		let gridOptions = this.gridOptions;		
 		this.theGrid.style.width = ((parseInt(gridOptions.width) + scrollerBarWidth) + 'px') || 'auto';
@@ -228,8 +227,8 @@ export class Grid {
 		this.gridOptions.icons = {
 			sortDescending: icons.sortDescending || '<span>&#x2193;</span>',
 			sortAscending : icons.sortAscending  || '<span>&#x2191;</span>',
-			groupCollapsed: icons.groupCollapsed || '<span>&gt;</span>', 
-			groupExpanded : icons.groupExpanded  || '<span>v</span>'
+			groupCollapsed: icons.groupCollapsed || '', 
+			groupExpanded : icons.groupExpanded  || ''
 		}
 		this.gridOptions.icons.sortDescending =  '<span class="'+ SortClasses.SORT_DESC +
 				'" style="display:none">' + this.gridOptions.icons.sortDescending + '</span>';
@@ -334,8 +333,8 @@ export class Grid {
 
 		if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
 			let groupCollapsed = '<span class="group-collapse" style="display:'+ 
-				( !rowObj.expanded?'inline':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
-			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'inline':'none')+'">' + 
+				( !rowObj.expanded?'':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
+			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'':'none')+'">' + 
 								this.gridOptions.icons.groupExpanded + '</span>' ;
 			groupedIcon = '<span class="grouped-icons">' + groupCollapsed + groupExpanded  + '</span>';
 		} 
@@ -435,7 +434,7 @@ export class Grid {
 		},this);	
 				
 		if (arrLeft.length > 0) {
-			$(this.tableBodyLeft).append( arrLeft.join('') );
+			$(this.tableBodyLeft).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after( arrLeft.join('') );
 		}
 		$(this.tableBodyCenter).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after(arrCenter.join(''));
 
@@ -568,8 +567,11 @@ export class Grid {
 	expandCollapseChildren(obj) {
 		if (obj.isExpand) {
 			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem);
-			this.renderChildrenDataRows(row, obj.level + 1, obj.parentRowIndex);
+			// this.renderChildrenDataRows(row, obj.level + 1, obj.parentRowIndex);
+			this.renderChildrenDataRows(row, obj.level + 1, obj.rowIndex);
 		} else {
+			$(this.tableBodyLeft).find('tr[pr-idx="'+ obj.rowIndex  +'"][lvl="'+ (obj.level + 1) +'"]').remove();
+			$(this.tableBodyCenter).find('tr[pr-idx="'+ obj.rowIndex  +'"][lvl="'+ (obj.level + 1) +'"]').remove();
 			this.removeChildrenDataRows();
 		}
 	}
@@ -599,21 +601,6 @@ export class Grid {
 			}
 			return row;
 		});
-
-		// var out = rows.reduce((preRow, row, idx) => {
-		// 	preRow = row;
-		// 	preRow.parent = parentNode;
-		// 	preRow.level = level;
-		// 	preRow.childIndex = idx;
-
-		// 	if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
-		// 		preRow.children = this.processData(row.children, row, level + 1);
-		// 		return preRow;
-		// 	} else {
-		// 		return preRow;
-		// 	}
-		// },[]);
-		// return out;
 	}
 	setDataRow(dataRow) {
 		if (dataRow.length > 0) {			
@@ -684,8 +671,9 @@ export class Grid {
 			}
 		}
 
+		this.gridBody.addEventListener('click',this.onBodyClick.bind(this));
+		// this.bodyContainerCenter.addEventListener('click',this.onBodyClick.bind(this));
 
-		this.bodyContainerCenter.addEventListener('click',this.onBodyClick.bind(this));
 		this.headerContainerInnerLeft.addEventListener("click",onClickHeader.bind(this));
 		this.headerContainerInnerCenter.addEventListener("click",onClickHeader.bind(this));
 	}
