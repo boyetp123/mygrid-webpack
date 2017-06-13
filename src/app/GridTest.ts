@@ -77,8 +77,7 @@ export class GridTest {
     loadFilesDef() {
         this.gridOptions.isGrouped = true;
         this.gridOptions.isDataAlreadyGrouped = true;
-        this.gridOptions.pinnedLeftCount=0;
+        this.gridOptions.pinnedLeftCount=1;
         this.gridOptions.api.setColumnDefs(this.filesColumnDefs);
     }
-
 }

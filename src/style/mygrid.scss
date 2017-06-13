@@ -2,19 +2,21 @@ div.mygrid{
 	overflow: hidden;	
 }
 
-div.mygrid .triangle-right {
+div.mygrid .group-collapse {
 	width: 0;
 	height: 0;
-	border-top: 50px solid transparent;
-	border-left: 100px solid red;
-	border-bottom: 50px solid transparent;
+	border-top: 15px solid transparent;
+	border-left: 30px solid red;
+	border-bottom: 15px solid transparent;
+	display: block;
 }
-div.mygrid .triangle-down {
+div.mygrid .group-expand {
 	width: 0;
 	height: 0;
-	border-left: 50px solid transparent;
-	border-right: 50px solid transparent;
-	border-top: 100px solid red;
+	border-left: 15px solid transparent;
+	border-right: 15px solid transparent;
+	border-top: 30px solid red;
+	display: block;
 }
 
 div.mygrid > table > tbody > tr > td{

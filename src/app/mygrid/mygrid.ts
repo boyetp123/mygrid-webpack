@@ -544,7 +544,7 @@ export class Grid {
 		});	
 	}
 	alignDataRowHeights(){
-		
+
 	}
 	render() {
 		this.createHeader();
@@ -586,6 +586,7 @@ export class Grid {
 		// 		this.processData(row.children, row, level + 1);
 		// 	}
 		// },this);
+		// return rows;
 
 		return rows.map((row, idx) => {
 			row.parent = parentNode;
@@ -593,12 +594,26 @@ export class Grid {
 			row.childIndex = idx;
 
 			if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
-				return this.processData(row.children, row, level + 1);
-			} else {
-				return row;
+				let children = this.processData(row.children, row, level + 1);
+				row.children = children;
 			}
+			return row;
 		});
 
+		// var out = rows.reduce((preRow, row, idx) => {
+		// 	preRow = row;
+		// 	preRow.parent = parentNode;
+		// 	preRow.level = level;
+		// 	preRow.childIndex = idx;
+
+		// 	if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
+		// 		preRow.children = this.processData(row.children, row, level + 1);
+		// 		return preRow;
+		// 	} else {
+		// 		return preRow;
+		// 	}
+		// },[]);
+		// return out;
 	}
 	setDataRow(dataRow) {
 		if (dataRow.length > 0) {			
