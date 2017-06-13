@@ -321,7 +321,7 @@ export class Grid {
 					'</div>'+
 				'</th>';
 	}	
-	createDataCell(rowObj:rowObject, colDef:ColumnDef, rowIndex:number, colIndex:number, isFirst:boolean) {
+	createDataCell(rowObj: rowObject, colDef: ColumnDef, rowIndex: number, colIndex: number, isFirst: boolean, rowGroupLevel: number) {
 		let row = rowObj.data || rowObj;
 		let val = row.hasOwnProperty(colDef.field)  ? row[ <string>colDef.field ]: '';
 		let styleArr:Array<string> = [];
@@ -344,6 +344,7 @@ export class Grid {
 		}
 		if (isFirst && this.gridOptions.rowHeight) {
 			styleArr.push('height:'+this.gridOptions.rowHeight);
+			styleArr.push('padding-left:' + (rowGroupLevel * 5) + 'px');
 		}
 		classArr.push( HAlignmentClasses[colDef.type.toUpperCase() ]);
 		let params = {
@@ -398,11 +399,11 @@ export class Grid {
 			let rowData = row;
 			if (pinnedLeftCount - 1 >= colIdx ) {
 				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0);			
-				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0);			
+				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel);			
 				arrLeft.push( rowStr );
 			} else {
 				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0 );			
-				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0 );			
+				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel );			
 				arrCenter.push( rowStr );
 			}
 		},this);			

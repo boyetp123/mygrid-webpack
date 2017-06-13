@@ -15,7 +15,7 @@
                 },
                 {"group": true,
                     "data": {"name": "Program Files", "size": "", "type": "File Folder", "dateModified": "11/09/2013 02:11"},
-                    "expanded": true,
+                    "expanded": false,
                     "children": [
                         {"group": true,
                             "data": {"name": "ASUS", "size": "", "type": "File Folder", "dateModified": "13/03/2014 1014"},
@@ -75,7 +75,7 @@
                         },
                         {"group": true,
                             "data": {"name": "Java", "size": "", "type": "File Folder", "dateModified": "13/03/2014 1014"},
-                            "expanded": true,
+                            "expanded": false,
                             "children": [
                                 {"group": true,
                                     "data": {"name": "jdk1.8.0", "size": "", "type": "File Folder", "dateModified": "13/03/2014 1014"},
