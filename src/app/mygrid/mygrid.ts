@@ -567,16 +567,14 @@ export class Grid {
 	expandCollapseChildren(obj) {
 		if (obj.isExpand) {
 			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem);
-			// this.renderChildrenDataRows(row, obj.level + 1, obj.parentRowIndex);
 			this.renderChildrenDataRows(row, obj.level + 1, obj.rowIndex);
 		} else {
-			$(this.tableBodyLeft).find('tr[pr-idx="'+ obj.rowIndex  +'"][lvl="'+ (obj.level + 1) +'"]').remove();
-			$(this.tableBodyCenter).find('tr[pr-idx="'+ obj.rowIndex  +'"][lvl="'+ (obj.level + 1) +'"]').remove();
-			this.removeChildrenDataRows();
+			this.removeChildrenDataRows(obj.rowIndex , obj.level + 1);
 		}
 	}
-	removeChildrenDataRows() {
-
+	removeChildrenDataRows(rowIndex, lvl) {
+		$(this.tableBodyLeft).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
+		$(this.tableBodyCenter).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
 	}
 	processData(rows, parentNode, level) {
 		// rows.forEach(function(row,idx) {
@@ -589,7 +587,6 @@ export class Grid {
 		// 	}
 		// },this);
 		// return rows;
-
 		return rows.map((row, idx) => {
 			row.parent = parentNode;
 			row.level = level;
