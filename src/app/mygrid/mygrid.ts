@@ -53,7 +53,7 @@ export class Grid {
 	}
 	createGridContainers() {
 		let innerHTMLs = ['<div class="mygrid">' ];
-				innerHTMLs.push('<div class="mygrid-header">this is a header')
+				innerHTMLs.push('<div class="mygrid-header">')
 
 					innerHTMLs.push( '<table>' );
 						innerHTMLs.push( '<tbody>' );

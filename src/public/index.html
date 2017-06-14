@@ -13,6 +13,17 @@
     <link type="text/css" rel="stylesheet" href="./css/bootstrap-responsive.css">
     <link type="text/css" rel="stylesheet" href="./css/mygrid.css">
 
+    <style>
+      #mygrid-test, #mygrid-test2{
+        border: 1px solid black;
+        width:810px;
+        overflow: hidden;
+      }
+      #mygrid-test2{
+        width:400px;
+      }
+    </style>
+
     <script>document.write('<base href="' + document.location + '" />');</script>
 
     <title>My Grid Test</title>
@@ -23,13 +34,20 @@
 
   </head>
   <body>
-       This is My grid
-       <div class="container">
+
+       <!--- div class="container">
            <button id="loadAthletesDef">Load Athletes Definition</button>
            <button id="loadAthletes">Load Athletes</button>
            <button id="loadFilesDef">Load Files Definition</button>
            <button id="loadFiles">Load Files</button>
+       </div -->
+       <div class="container">
+         grid 1
        </div>
        <div id="mygrid-test"  class="ag-fresh container"></div>
+       <div class="container">
+         grid 2
+       </div>
+       <div id="mygrid-test2"  class="ag-fresh container"></div>
   </body>
 </html>
