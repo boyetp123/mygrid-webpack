@@ -332,7 +332,10 @@ export class Grid {
 		}
 		if (isFirst && this.gridOptions.rowHeight) {
 			styleArr.push('height:'+this.gridOptions.rowHeight);
-			styleArr.push('padding-left:' + (rowGroupLevel * 5) + 'px');
+
+			if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
+				styleArr.push('padding-left:' + (rowGroupLevel * 5) + 'px');
+			}
 		}
 		classArr.push( HAlignmentClasses[colDef.type.toUpperCase() ]);
 		let params = {
@@ -377,7 +380,7 @@ export class Grid {
 		let returnObj:any = {};
 		let rowStr = '';
 		parentId = parentId || '';
-	    let pid = (parentId ? parentId + '-' : '') + 'rl' + row.level + '-ri' + row.childIndex;
+	    let pid = (parentId ? parentId + '-' : '') + row.level + '|' + row.childIndex;
 	
 		this.columnDefs.forEach((colDef, colIdx) => {
 			let rowData = row;
@@ -415,10 +418,15 @@ export class Grid {
 			}
 		},this);	
 				
+		// if (arrLeft.length > 0) {
+		// 	$(this.tableBodyLeft).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after( arrLeft.join('') );
+		// }
+		// $(this.tableBodyCenter).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after(arrCenter.join(''));
+
 		if (arrLeft.length > 0) {
-			$(this.tableBodyLeft).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after( arrLeft.join('') );
+			$(this.tableBodyLeft).find('tr[pid="'+ pid +'"]').after( arrLeft.join('') );
 		}
-		$(this.tableBodyCenter).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after(arrCenter.join(''));
+		$(this.tableBodyCenter).find('tr[pid="'+ pid  +'"]').after(arrCenter.join(''));
 
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
@@ -534,22 +542,24 @@ export class Grid {
 			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
-	getRowDataObj(level, rowIndex, parentRowIndex, trDomElem) {
-		if (level === 0) {
-			return this.gridOptions.rowData[rowIndex];
-		} else {
-			let $tr = $(trDomElem).parents('tr');
-			let $tr1 = $($tr[0]);
-			let lvl = Number($tr1.attr('lvl') || '0');
-			let rIndex = Number($tr1.attr('r-idx') || '0');
-			let prIndex = Number($tr1.attr('pr-idx') || '0');
-			return ( this.getRowDataObj(lvl, rIndex, prIndex, $tr[0]) );
+	getRowDataObj(level:number, rowIndex:number, parentRowIndex:number, trDomElem:any, parentId:string) {
+		let levelRows:any = parentId.split('-');
+		let out:any = this.gridOptions.rowData;
+
+		for (var i=0; i < levelRows.length; i++){
+			let lr = levelRows[ i ].split('|');
+			if (  out.children ){
+				out = out.children[ Number( lr[1] ) ];
+			} else {
+				out = out[ Number( lr[1] ) ];
+			}
 		}
+		return out;
 	}
 	expandCollapseChildren(obj) {
 		var pid = obj.trDomElem.getAttribute('pid');
 		if (obj.isExpand) {
-			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem);
+			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem, pid);
 			this.renderChildrenDataRows(row, obj.level + 1, obj.rowIndex, pid);
 		} else {
 			this.removeChildrenDataRows(obj.rowIndex , obj.level + 1,pid);
@@ -654,8 +664,6 @@ export class Grid {
 		}
 
 		this.gridBody.addEventListener('click',this.onBodyClick.bind(this));
-		// this.bodyContainerCenter.addEventListener('click',this.onBodyClick.bind(this));
-
 		this.headerContainerInnerLeft.addEventListener("click",onClickHeader.bind(this));
 		this.headerContainerInnerCenter.addEventListener("click",onClickHeader.bind(this));
 	}
