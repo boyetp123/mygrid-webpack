@@ -102,11 +102,7 @@ export class Grid {
 							innerHTMLs.push( '<tr>' );
 								innerHTMLs.push( '<td class="left-pane" style="display:none">' );
 									innerHTMLs.push( '<div class="mygrid-left">' );	
-										// innerHTMLs.push( '<div class="mygrid-header">' );
-										// 	innerHTMLs.push( '<div class="mygrid-header-inner">' );
-										// 		innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
-										// 	innerHTMLs.push( '</div>' );
-										// innerHTMLs.push( '</div>' );
+
 										innerHTMLs.push( '<div class="mygrid-body">' );
 											innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
 												innerHTMLs.push( '<table><tbody></tbody></table>');
@@ -116,11 +112,7 @@ export class Grid {
 								innerHTMLs.push( '</td>' );
 								innerHTMLs.push( '<td class="center-pane">' );
 									innerHTMLs.push( '<div class="mygrid-center">' );	
-										// innerHTMLs.push( '<div class="mygrid-header">' );
-										// 	innerHTMLs.push( '<div class="mygrid-header-inner">' );
-										// 		innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
-										// 	innerHTMLs.push( '</div>' );
-										// innerHTMLs.push( '</div>' );
+
 										innerHTMLs.push( '<div class="mygrid-body">' );
 											innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
 												innerHTMLs.push( '<table><tbody></tbody></table>');
@@ -130,11 +122,7 @@ export class Grid {
 								innerHTMLs.push( '</td>' );
 								innerHTMLs.push( '<td class="right-pane" style="display:none">' );
 									innerHTMLs.push( '<div class="mygrid-right">' );	
-										// innerHTMLs.push( '<div class="mygrid-header">' );
-										// 	innerHTMLs.push( '<div class="mygrid-header-inner">' );
-										// 		innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
-										// 	innerHTMLs.push( '</div>' );
-										// innerHTMLs.push( '</div>' );
+
 										innerHTMLs.push( '<div class="mygrid-body">' );
 											innerHTMLs.push( '<div class="mygrid-body-y-scroll">' );
 												innerHTMLs.push( '<table><tbody></tbody></table>');
@@ -381,28 +369,22 @@ export class Grid {
 					 '</div>'+
 				'</td>';
 	}
-	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number) {
+	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
 		let styleArr:Array<string> = [];
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
 		let returnObj:any = {};
 		let rowStr = '';
-		// let isGrouped = this.gridOptions.isGrouped;
-		// let isDataAlreadyGrouped = this.gridOptions.isDataAlreadyGrouped;
-	    let pid = row.childIndex + '' + row.level;
-
-		// row.parent = parentRowIndex === 0 ? null : 
+		parentId = parentId || '';
+	    let pid = (parentId ? parentId + '-' : '') + 'rl' + row.level + '-ri' + row.childIndex;
 	
 		this.columnDefs.forEach((colDef, colIdx) => {
-			// let rowData =  (isGrouped && isDataAlreadyGrouped ) ? row.data : row;
 			let rowData = row;
 			if (pinnedLeftCount - 1 >= colIdx ) {
-				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0);			
 				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel);			
 				arrLeft.push( rowStr );
 			} else {
-				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0 );			
 				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel );			
 				arrCenter.push( rowStr );
 			}
@@ -418,14 +400,13 @@ export class Grid {
 		}
 		return 	returnObj;	
 	}
-	renderChildrenDataRows(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
+	renderChildrenDataRows(rowData:any, rowGroupLevel:number, parentRowIndex:number, pid:string ) {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
-		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
 
 		rowData.children.forEach( (row:any, rowIndex:number) => {
-			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex);
-			// obj.pid = rowData.childIndex + '' + rowData.level;
+			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex, pid);
+
 			if (obj.center) {
 				arrCenter.push(obj.center)
 			} 
@@ -492,7 +473,7 @@ export class Grid {
 			return retval;
 		};
 		let rowData = this.gridOptions.rowData.sort( (a,b) => sortFun(a,b)  ); 
-		this.createBodyData(rowData, 0, 0);
+		this.createBodyData(rowData, 0, 0, '');
 	}
 	removeData(startRow = 0, endRow = 0) {
 		if (startRow === 0 && endRow === 0) {
@@ -503,13 +484,13 @@ export class Grid {
 			// remove the rows here
 		}
 	}
-	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number) {
+	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
 		let startRowIndex = this.gridOptions.rowData.length;
 
 		rowData.forEach( (row:any, rowIndex:number) => {
-			let obj = this.createDataRow(row, startRowIndex + rowIndex, rowGroupLevel, parentRowIndex);
+			let obj = this.createDataRow(row, startRowIndex + rowIndex, rowGroupLevel, parentRowIndex, parentId);
 
 			if (obj.center) {
 				arrCenter.push(obj.center)
@@ -549,7 +530,7 @@ export class Grid {
 	render() {
 		this.createHeader();
 		if (this.gridOptions.rowData.length > 0) {
-			this.createBodyData(this.gridOptions.rowData, 0, 0);		
+			this.createBodyData(this.gridOptions.rowData, 0, 0, '');		
 			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
@@ -566,16 +547,19 @@ export class Grid {
 		}
 	}
 	expandCollapseChildren(obj) {
+		var pid = obj.trDomElem.getAttribute('pid');
 		if (obj.isExpand) {
 			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem);
-			this.renderChildrenDataRows(row, obj.level + 1, obj.rowIndex);
+			this.renderChildrenDataRows(row, obj.level + 1, obj.rowIndex, pid);
 		} else {
-			this.removeChildrenDataRows(obj.rowIndex , obj.level + 1);
+			this.removeChildrenDataRows(obj.rowIndex , obj.level + 1,pid);
 		}
 	}
-	removeChildrenDataRows(rowIndex, lvl) {
-		$(this.tableBodyLeft).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
-		$(this.tableBodyCenter).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
+	removeChildrenDataRows(rowIndex, lvl, pid) {
+		$(this.tableBodyLeft).find('tr[pid^="'+ pid  +'-"]').remove();
+		$(this.tableBodyCenter).find('tr[pid^="'+ pid  +'-"]').remove();
+		// $(this.tableBodyLeft).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
+		// $(this.tableBodyCenter).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
 	}
 	processData(rows, parentNode, level) {
 		// rows.forEach(function(row,idx) {
@@ -606,7 +590,7 @@ export class Grid {
 			this.removeData(0, 0);
 			// this.gridOptions.rowData = dataRow; //.slice(0,200) ;	
 			let processedRows = this.processData(dataRow, null, 0);
-			this.createBodyData(processedRows, 0, 0);
+			this.createBodyData(processedRows, 0, 0, '');
 			this.gridOptions.rowData =  processedRows
 			this.alignHeadersAndDataCellsColumnWidths();
 		}
@@ -614,7 +598,7 @@ export class Grid {
 	appenDataRow(dataRow) {
 		if (dataRow.length > 0) {
 			let addedRows = this.processData(dataRow, null, 0);
-			this.createBodyData( addedRows, 0, 0);		
+			this.createBodyData( addedRows, 0, 0, '');		
 			this.gridOptions.rowData =  this.gridOptions.rowData.concat( );
 			this.alignHeadersAndDataCellsColumnWidths();
 		}
