@@ -39,7 +39,7 @@ export class GridTest {
     gridOptions2: any = {
         columnDefs: [],
         rowData: [],
-        width:'800px',
+        width:'400px',
         height:'400px',
         rowHeight:'40px',
         pinnedLeftCount:1,
