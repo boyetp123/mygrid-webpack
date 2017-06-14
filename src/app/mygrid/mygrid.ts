@@ -309,7 +309,7 @@ export class Grid {
 					'</div>'+
 				'</th>';
 	}	
-	createDataCell(rowObj: rowObject, colDef: ColumnDef, rowIndex: number, colIndex: number, isFirst: boolean, rowGroupLevel: number) {
+	createDataCell(rowObj: rowObject, colDef: ColumnDef, rowIndex: number, colIndex: number, isFirst: boolean, rowGroupLevel: number): string {
 		let row = rowObj.data || rowObj;
 		let val = row.hasOwnProperty(colDef.field)  ? row[ <string>colDef.field ]: '';
 		let styleArr:Array<string> = [];
@@ -333,7 +333,8 @@ export class Grid {
 		if (isFirst && this.gridOptions.rowHeight) {
 			styleArr.push('height:'+this.gridOptions.rowHeight);
 
-			if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
+			// if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
+			if (isDataAlreadyGrouped && colIndex ===0) {
 				styleArr.push('padding-left:' + (rowGroupLevel * 5) + 'px');
 			}
 		}
@@ -433,7 +434,7 @@ export class Grid {
 		}
 		// this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
 	}	
-	equalizeBodyHeights() {
+	equalizeBodyHeights(): void {
 		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
 		// let tableBodyLeft = this.tableBodyLeft;
 		// let tableBodyCenter = this.tableBodyCenter;
@@ -461,7 +462,7 @@ export class Grid {
 		
 		console.info('using array total time for ' + len + ' records ' + ( (endTime - startTime)/1000 ) + ' secs');
 	}
-	sortData(field:string, sortDir:string) {
+	sortData(field:string, sortDir:string): void {
 		let sortFun=function(a,b) {
 			let retval = 0;
 			if (sortDir === 'asc') {
@@ -483,7 +484,7 @@ export class Grid {
 		let rowData = this.gridOptions.rowData.sort( (a,b) => sortFun(a,b)  ); 
 		this.createBodyData(rowData, 0, 0, '');
 	}
-	removeData(startRow = 0, endRow = 0) {
+	removeData(startRow = 0, endRow = 0): void {
 		if (startRow === 0 && endRow === 0) {
 			this.gridOptions.rowData = [];
 			this.tableBodyLeft.innerHTML = '';
@@ -492,7 +493,7 @@ export class Grid {
 			// remove the rows here
 		}
 	}
-	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
+	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number, parentId:string): void {
 		let arrCenter:Array<string> = [];
 		let arrLeft:Array<string> = [];
 		let startRowIndex = this.gridOptions.rowData.length;
@@ -519,7 +520,7 @@ export class Grid {
 		}
 			
 	}
-	alignHeadersAndDataCellsColumnWidths() {
+	alignHeadersAndDataCellsColumnWidths():void {
 
 		this.columnDefs.forEach( (columnDef, idx, arr) => {
 
@@ -532,10 +533,10 @@ export class Grid {
 			}
 		});	
 	}
-	alignDataRowHeights(){
+	alignDataRowHeights(): void {
 
 	}
-	render() {
+	render(): void {
 		this.createHeader();
 		if (this.gridOptions.rowData.length > 0) {
 			this.createBodyData(this.gridOptions.rowData, 0, 0, '');		
