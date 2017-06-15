@@ -1,11 +1,13 @@
-div.mygrid{
+div.mygrid {
 	overflow: hidden;	
 }
-
+div.mygrid * {
+	/*box-sizing: border-box;*/
+	/*white-space: nowrap;*/
+}
 div.mygrid div.mygrid-scroll-container-body {
 	overflow-y: scroll;
 }
-
 div.mygrid  table > tbody > tr > td{
 	vertical-align: top;
 }
@@ -19,8 +21,10 @@ div.mygrid  table, div.mygrid table tbody, div.mygrid table td,  div.mygrid tabl
 }
 div.mygrid  table .grouped-icons{
 	cursor: pointer;
-	width: 20px;
+	width: 10px;
 	display: inline-block;
+	height: 100%;
+	margin-right: 3px;
 }
 
 div.mygrid  table .grouped-icons .group-collapse {
@@ -109,9 +113,9 @@ div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr > td
 div.mygrid  div.mygrid-header > div.mygrid-header-inner > table > thead > tr > th.grid-hdr-cell {
 	padding:3px 2px 3px 8px;
 	vertical-align: middle;
+    border-collapse: collapse;	
 	overflow: hidden;
 }
-
 div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr:nth-of-type(odd) > td{
 	background-color:lightblue;
 }

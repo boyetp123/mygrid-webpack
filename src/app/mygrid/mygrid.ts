@@ -320,11 +320,11 @@ export class Grid {
 		let groupedIcon = '';
 
 		if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
-			let groupCollapsed = '<span class="group-collapse" style="display:'+ 
-				( !rowObj.expanded?'':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</span>'; 
-			let groupExpanded =  '<span class="group-expand" style="display:'+(rowObj.expanded?'':'none')+'">' + 
-								this.gridOptions.icons.groupExpanded + '</span>' ;
-			groupedIcon = '<span class="grouped-icons">' + groupCollapsed + groupExpanded  + '</span>';
+			let groupCollapsed = '<div class="group-collapse" style="display:'+ 
+				( !rowObj.expanded?'':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</div>'; 
+			let groupExpanded =  '<div class="group-expand" style="display:'+(rowObj.expanded?'':'none')+'">' + 
+								this.gridOptions.icons.groupExpanded + '</div>' ;
+			groupedIcon = '<div class="grouped-icons">' + groupCollapsed + groupExpanded  + '</div>';
 		} 
 		if (colDef.width) {
 			styleArr.push('width:'+colDef.width + '');
@@ -335,7 +335,7 @@ export class Grid {
 
 			// if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
 			if (isDataAlreadyGrouped && colIndex ===0) {
-				styleArr.push('padding-left:' + (rowGroupLevel * 5) + 'px');
+				styleArr.push('padding-left:' + (3 + (rowGroupLevel * 5)) + 'px');
 			}
 		}
 		classArr.push( HAlignmentClasses[colDef.type.toUpperCase() ]);
@@ -616,22 +616,14 @@ export class Grid {
 	}
 	setEvents() {
 		let currentLeft = 0;
-		// let currentTop = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
-		// let bodyContainerYscrollLeft = this.bodyContainerYscrollLeft;
-		let onScrollEvent = function(event) {
 
+		let onScrollEvent = function(event) {
 			let scrollLeft = event.currentTarget.scrollLeft;
-			// let scrollTop = event.currentTarget.scrollTop;
-			
-			if ( currentLeft !== scrollLeft ) {
+			// if ( currentLeft !== scrollLeft ) {
 				currentLeft = scrollLeft;
 				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
-			}
-			// if ( currentTop !== scrollTop ) {
-			// 	currentTop = scrollTop;
-			// 	bodyContainerYscrollLeft.style.top = (scrollTop  * -1 ) + 'px';		
-			// }				
+			// }
 		}
 		this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
 		let sortingDir = '';
@@ -694,7 +686,7 @@ export class Grid {
 			let $target = $(target);
 			let $tr = $(target).parents('tr');
 			// let tr = this.parent(target,'tr');
-			if ($target.parents('span.grouped-icons').length > 0  ) {
+			if ($target.parents('.grouped-icons').length > 0  ) {
 				let p = target.parentNode;
 				let p2  = p.parentNode;
 				let isExpand = false;

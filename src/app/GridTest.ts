@@ -1,7 +1,5 @@
 import {Grid } from './mygrid/mygrid';
 import {Observable } from 'rxjs';
-
-// declare var console: any;
 declare var fetch: any;
 
 export class GridTest {
@@ -18,7 +16,7 @@ export class GridTest {
         {headerName: 'Total', field: 'total', width: '100px', type:'number', format:'0,0.00'}
     ];
     filesColumnDefs: any = [
-        {headerName: 'Name', field: 'name', width: '100px', sortable:true, sort: 'desc'},
+        {headerName: 'Name', field: 'name', width: '105px', sortable:true, sort: 'desc'},
         {headerName: 'Size', field: 'size', width: '90px' ,type:'number', sortable:true, format:'0'},
         {headerName: 'Type', field: 'type', width: '120px'},
         {headerName: 'Modified', field: 'dateModified', width: '90px' ,type:'text', format:'0' }
@@ -63,40 +61,72 @@ export class GridTest {
         // document.querySelector('#loadFiles').addEventListener('click',this.loadGroup.bind(this) );
         this.grid = new Grid('#mygrid-test', this.gridOptions);
         this.grid2 = new Grid('#mygrid-test2', this.gridOptions2);
-        this.loadFilesDef();
-        this.loadAthletesDef();
+        // this.loadFilesDef();
         this.loadGroup();
+        // this.loadAthletesDef();
         this.loadAthletes();
     }
     loadAthletes() {
-        fetch('/data/olympicAthletes.json')
-        .then(response => response.json())
-        .then(data => {
-            this.gridOptions.api.setDataRow(data.data.slice(0,200) );
-        }).catch(err => {
-            console.error('fail',err);
-        });
+        (new Promise( (resolve, reject) => {
+            this.gridOptions.isGrouped = false;
+            this.gridOptions.isDataAlreadyGrouped = false;
+            this.gridOptions.api.setColumnDefs(this.atheleteColumnDefs );
+            this.gridOptions.pinnedLeftCount = 1;
+            resolve('definition-loded')
+        })).then( result => {
+            if (result === 'definition-loded' ){
+                return (new Promise( (resolve, reject) => {
+                    fetch('/data/olympicAthletes.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        resolve(data);
+                    }).catch(err => {
+                        console.error('fail',err);
+                        reject(err);
+                    });
+                }));
+            }
+        }).then( result => {
+            if (result){
+                this.gridOptions.api.setDataRow(result.data.slice(0,200) );
+            }
+        })
+        // fetch('/data/olympicAthletes.json')
+        // .then(response => response.json())
+        // .then(data => {
+        //     this.gridOptions.api.setDataRow(data.data.slice(0,200) );
+        // }).catch(err => {
+        //     console.error('fail',err);
+        // });
     }
-    loadAthletesDef() {
-        this.gridOptions.isGrouped = false;
-        this.gridOptions.isDataAlreadyGrouped = false;
-        this.gridOptions.api.setColumnDefs(this.atheleteColumnDefs );
-        this.gridOptions.pinnedLeftCount = 1;
-    }
+    // loadAthletesDef() {
+        // this.gridOptions.isGrouped = false;
+        // this.gridOptions.isDataAlreadyGrouped = false;
+        // this.gridOptions.api.setColumnDefs(this.atheleteColumnDefs );
+        // this.gridOptions.pinnedLeftCount = 1;
+    // }
     loadGroup() {
-        fetch('/data/group.json')
-        .then(response => response.json() )
-        .then(data => {
-            this.gridOptions2.api.setDataRow(data.data);
-        } )
-        .catch(err => {
-            console.log('fail');
+        (new Promise( (resolve, reject) => {
+            this.gridOptions2.isGrouped = true;
+            this.gridOptions2.isDataAlreadyGrouped = true;
+            this.gridOptions2.pinnedLeftCount=1;
+            this.gridOptions2.api.setColumnDefs(this.filesColumnDefs);
+            resolve('definition-loded')
+        })).then( result => {
+            fetch('/data/group.json')
+            .then(response => response.json() )
+            .then(data => {
+                this.gridOptions2.api.setDataRow(data.data);
+            })
+            .catch(err => {
+                console.log('fail');
+            });
         });
     }
-    loadFilesDef() {
-        this.gridOptions2.isGrouped = true;
-        this.gridOptions2.isDataAlreadyGrouped = true;
-        this.gridOptions2.pinnedLeftCount=1;
-        this.gridOptions2.api.setColumnDefs(this.filesColumnDefs);
-    }
+    // loadFilesDef() {
+    //     this.gridOptions2.isGrouped = true;
+    //     this.gridOptions2.isDataAlreadyGrouped = true;
+    //     this.gridOptions2.pinnedLeftCount=1;
+    //     this.gridOptions2.api.setColumnDefs(this.filesColumnDefs);
+    // }
 }
