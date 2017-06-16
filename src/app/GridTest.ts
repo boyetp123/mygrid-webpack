@@ -1,6 +1,7 @@
 import {Grid } from './mygrid/mygrid';
 import {Observable } from 'rxjs';
 declare var fetch: any;
+declare var postMessage: any;
 
 export class GridTest {
     atheleteColumnDefs: any = [
@@ -49,6 +50,9 @@ export class GridTest {
     };
     grid: Grid;
     grid2: Grid;
+    bigData: any;
+    webWorker: any;
+
     constructor() {
         console.info('GridTest constructor');
         this.onReady({});
@@ -59,12 +63,43 @@ export class GridTest {
         // document.querySelector('#loadAthletesDef').addEventListener('click',this.loadAthletesDef.bind(this));
         // document.querySelector('#loadFilesDef').addEventListener('click',this.loadFilesDef.bind(this));
         // document.querySelector('#loadFiles').addEventListener('click',this.loadGroup.bind(this) );
+        document.querySelector('#loadWW').addEventListener('click',this.loadWebWorker.bind(this) );
+        document.querySelector('#stopWW').addEventListener('click',this.stopWebWorker.bind(this) );
+        
         this.grid = new Grid('#mygrid-test', this.gridOptions);
         this.grid2 = new Grid('#mygrid-test2', this.gridOptions2);
         // this.loadFilesDef();
         this.loadGroup();
         // this.loadAthletesDef();
         this.loadAthletes();
+    }
+    loadWebWorker(){
+        // this.webWorker = this.wwLoader(this.sampleWebWorker);
+        this.webWorker = new Worker(URL.createObjectURL(new Blob(['('+ this.sampleWebWorker +')()'])));
+        this.webWorker.onmessage = this.acceptMessage;
+
+        setTimeout(()=>{
+            this.webWorker.postMessage('start the thread');
+        },500);
+    }
+    // wwLoader (fn ) {
+    //     return new Worker(URL.createObjectURL(new Blob(['('+ fn +')()'])));
+    // }
+    sampleWebWorker(){
+        self.addEventListener('message', function( e ){
+            console.info('message past to start',e );
+        });
+
+        let ctr = 0;
+        // setInterval( () => {
+        //     postMessage( 'count ' + ctr++ );
+        // },200);
+    }
+    stopWebWorker(){
+        this.webWorker.terminate();
+    }
+    acceptMessage( msg ){
+        console.info('got message ', msg.data);
     }
     loadAthletes() {
         (new Promise( (resolve, reject) => {
@@ -86,8 +121,9 @@ export class GridTest {
                     });
                 }));
             }
-        }).then( result => {
+        }).then( (result: any ) => {
             if (result){
+                this.bigData = result.data;
                 this.gridOptions.api.setDataRow(result.data.slice(0,200) );
             }
         })

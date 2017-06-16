@@ -1,4 +1,6 @@
-
+/*
+	do sorting on the web workers
+*/
 declare var $: any;
 declare var numeral: any;
 declare var moment: any;
@@ -271,11 +273,8 @@ export class Grid {
 		this.tableHeaderCenter.innerHTML = '<tr>' + arrCenter.join('') + '</tr>';
 		
 		if (!this.gridOptions.disableVerticalScroll) {
-			// this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height = 
-			// 	( this.theGrid.offsetHeight - this.headerContainerCenter.offsetHeight ) + 'px';
 			this.gridBody.style.height = ( this.theGrid.offsetHeight - this.gridHeader.offsetHeight ) + 'px';
 		} else {
-			// this.bodyContainerLeft.style.height = this.bodyContainerCenter.style.height ='auto';
 			this.gridBody.style.height = this.bodyContainerCenter.style.height ='auto';
 		}
 	}
@@ -481,8 +480,9 @@ export class Grid {
 			console.info('sorting a.'+field,a[field] ,'b.'+field, b[field],'sortDir',sortDir,'return',retval );
 			return retval;
 		};
-		let rowData = this.gridOptions.rowData.sort( (a,b) => sortFun(a,b)  ); 
-		this.createBodyData(rowData, 0, 0, '');
+		let rowData = this.gridOptions.rowData.sort(sortFun); 
+		this.setDataRow( rowData );
+		// this.createBodyData(rowData, 0, 0, '');
 	}
 	removeData(startRow = 0, endRow = 0): void {
 		if (startRow === 0 && endRow === 0) {
