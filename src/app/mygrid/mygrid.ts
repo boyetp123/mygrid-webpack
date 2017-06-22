@@ -4,6 +4,8 @@
 declare var $: any;
 declare var numeral: any;
 declare var moment: any;
+declare var postMessage: any;
+
 // import {ColumnDef, GridOptions, SortClasses, DefaultFormats, rowObject, 
 // 		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
 
@@ -37,13 +39,14 @@ export class Grid {
 	bodyContainerYscrollLeft: any; 
 	tableBodyLeft: any;	
 	hasInitCcompleted: boolean;
+	sortWebWorker: any;
 	
 	constructor(selector:string, gridOptions:GridOptions ) {
 		this.hasInitCcompleted = false;
 		this.gridContainer = document.querySelector(selector);
 		this.setUpProperties(gridOptions)
 		this.createGridContainers();
-		this.setUpWidths();		
+		this.setUpWidths();	
 		this.render();
 		this.setUpAPI();
 		this.setEvents();
@@ -174,14 +177,14 @@ export class Grid {
 	}
 	setUpWidths(): void {
 		let scrollerBarWidth = 8;
-		let gridOptions = this.gridOptions;		
+		let gridOptions = this.gridOptions;
 		this.theGrid.style.width = ((parseInt(gridOptions.width) + scrollerBarWidth) + 'px') || 'auto';
 		this.theGrid.style.height = !gridOptions.disableVerticalScroll ?( this.gridOptions.height || 'auto') : 'auto';
 		let totalGridWidth = this.theGrid.offsetWidth - scrollerBarWidth;
 		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
 		
-		let totalLeftWidth = 0;		
+		let totalLeftWidth = 0;
 		if (pinnedLeftCount > 0 && this.columnDefs.length > 0 ) {
 			this.theGridTdLeftPane.style.display = '';
 			for(let i = 0; i <pinnedLeftCount ; i++) {
@@ -201,9 +204,9 @@ export class Grid {
 	setUpProperties(gridOptions:GridOptions) {
 		let icons = gridOptions.icons || {sortDescending:null,sortAscending:null, groupCollapsed:null, groupExpanded:null};		
 		this.gridOptions = gridOptions;
-		this.gridOptions.rowData = gridOptions.rowData || [];				
+		this.gridOptions.rowData = gridOptions.rowData || [];
 		this.setColumnDefs(gridOptions.columnDefs);		
-		this.gridOptions.rowHeight = gridOptions.rowHeight || '30px';			
+		this.gridOptions.rowHeight = gridOptions.rowHeight || '30px';
 		this.gridOptions.pinnedLeftCount = gridOptions.pinnedLeftCount || 0;
 		this.gridOptions.pinnedRightCount =  gridOptions.pinnedRightCount || 0;
 		this.gridOptions.flexRow =  gridOptions.flexRow || false;
@@ -241,9 +244,9 @@ export class Grid {
 						colDef.cellFormatter ,
 						colDef.headerCellFormatter,
 						colDef.sortable ,
-						colDef.width  ,    
-						colDef.headerClasses ,  
-						colDef.cellClasses				
+						colDef.width,
+						colDef.headerClasses ,
+						colDef.cellClasses
 					);
 		});
 		if (this.hasInitCcompleted) {
@@ -259,7 +262,7 @@ export class Grid {
 		if (this.gridOptions.columnDefs) {			
 			this.columnDefs.forEach( (colDef, colIdx) => {
 				if (pinnedLeftCount - 1 >= colIdx) {
-					arrLeft.push( this.createHeaderCell(colDef, colIdx));					
+					arrLeft.push( this.createHeaderCell(colDef, colIdx));
 				} else {
 					arrCenter.push( this.createHeaderCell(colDef, colIdx));
 				}
@@ -308,7 +311,9 @@ export class Grid {
 					'</div>'+
 				'</th>';
 	}	
-	createDataCell(rowObj: rowObject, colDef: ColumnDef, rowIndex: number, colIndex: number, isFirst: boolean, rowGroupLevel: number): string {
+	createDataCell(rowObj: rowObject, colDef: ColumnDef,
+				rowIndex: number, colIndex: number, isFirst: boolean,
+				rowGroupLevel: number): string {
 		let row = rowObj.data || rowObj;
 		let val = row.hasOwnProperty(colDef.field)  ? row[ <string>colDef.field ]: '';
 		let styleArr:Array<string> = [];
@@ -435,15 +440,11 @@ export class Grid {
 	}	
 	equalizeBodyHeights(): void {
 		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
-		// let tableBodyLeft = this.tableBodyLeft;
-		// let tableBodyCenter = this.tableBodyCenter;
 		let centerColStartIdx=pinnedLeftCount;
 		let tdsLeft = Array.prototype.slice.call( this.tableBodyLeft.querySelectorAll('tbody > tr > td[col-idx="0"]') , 0 );
 		let tdsCenter = Array.prototype.slice.call(this.tableBodyCenter.querySelectorAll('tbody > tr > td[col-idx="'+centerColStartIdx+'"]'), 0);
-		
 		let len = tdsLeft.length;
-		let startTime = (new Date()).getTime();
-		
+		// let startTime = (new Date()).getTime();
 		for(let i=0; i < len; i++) {
 			let tdleft = tdsLeft[i];
 			let tdCenter = tdsCenter[i];
@@ -454,15 +455,63 @@ export class Grid {
 				console.info('equalizing height');
 				let maxHeight = Math.max( cH , lH );
 				tdleft.style.height =  tdCenter.style.height = maxHeight + 'px';
-			}			
+			}
 		}
-			
-		let endTime = (new Date()).getTime();
-		
-		console.info('using array total time for ' + len + ' records ' + ( (endTime - startTime)/1000 ) + ' secs');
+		// let endTime = (new Date()).getTime();
+		// console.info('using array total time for ' + len + ' records ' + ( (endTime - startTime)/1000 ) + ' secs');
 	}
-	sortData(field:string, sortDir:string): void {
-		let sortFun=function(a,b) {
+	initSortWebWorker(): void {
+		let sortFun = () => {
+			self.addEventListener('message', ( e ) => {
+				console.info('message past to start sorting', e.data );
+				let data = e.data ;
+				let field: string = data.field;
+				let sortingDir: string = data.sortingDir;
+				// let rowData = data.rowData;
+				let str: string = data.sortFunc;
+				let fparams = str.match(/\(.*\)/g)[0].replace(/\(|\)/g,'').split(',');
+				// let firstIdx = str.indexOf('{') ;
+				// let lastIdx = str.lastIndexOf('}');
+				let fbody = str.substring( str.indexOf('{') + 1, str.lastIndexOf('}') ).trim();
+				let sortFunc = new Function(fparams[0], fparams[1], fbody);
+				let sortFunc2 = sortFunc(field, sortingDir);
+				// console.info('rowData',rowData.length)
+				let sortedData = data.rowData.sort(sortFunc2);
+				postMessage({sortedData: sortedData });
+			});
+		}
+		let strFun = '('+ sortFun +')()';
+		console.info('strFun', strFun);
+        // this.sortWebWorker = new Worker(URL.createObjectURL(new Blob(['('+ sortFun +')()'])));
+        this.sortWebWorker = new Worker(URL.createObjectURL(new Blob([strFun])));
+        this.sortWebWorker.onmessage = this.onSortDone.bind(this);
+	}
+	onSortDone( msg ): void {
+		console.info('onSortDone', msg.data )
+		this.setDataRow( msg.data.sortedData );
+	}
+	// sortData(field:string, sortDir:string): any {
+	// 	let sortFun = (a,b) => {
+	// 		let retval = 0;
+	// 		if (sortDir === 'asc') {
+	// 			if (a[field] > b[field]) {
+	// 				retval = 1;
+	// 			} else if (a[field] < b[field]) {
+	// 				retval = -1;
+	// 			} 
+	// 		} else {
+	// 			if (a[field] > b[field]) {
+	// 				retval = -1;
+	// 			} else if (a[field] < b[field]) {
+	// 				retval = 1;
+	// 			}	
+	// 		}
+	// 		return retval;
+	// 	};
+	// 	return this.gridOptions.rowData.sort(sortFun); 
+	// }
+	sortDataFun(field:string, sortDir:string): any {
+		let sortFun = (a, b) => {
 			let retval = 0;
 			if (sortDir === 'asc') {
 				if (a[field] > b[field]) {
@@ -475,20 +524,17 @@ export class Grid {
 					retval = -1;
 				} else if (a[field] < b[field]) {
 					retval = 1;
-				} 			
+				}	
 			}
-			console.info('sorting a.'+field,a[field] ,'b.'+field, b[field],'sortDir',sortDir,'return',retval );
 			return retval;
 		};
-		let rowData = this.gridOptions.rowData.sort(sortFun); 
-		this.setDataRow( rowData );
-		// this.createBodyData(rowData, 0, 0, '');
+		return sortFun; 
 	}
 	removeData(startRow = 0, endRow = 0): void {
 		if (startRow === 0 && endRow === 0) {
 			this.gridOptions.rowData = [];
 			this.tableBodyLeft.innerHTML = '';
-			this.tableBodyCenter.innerHTML = '';			
+			this.tableBodyCenter.innerHTML = '';
 		} else {
 			// remove the rows here
 		}
@@ -521,9 +567,7 @@ export class Grid {
 			
 	}
 	alignHeadersAndDataCellsColumnWidths():void {
-
 		this.columnDefs.forEach( (columnDef, idx, arr) => {
-
 			if (columnDef.width === 'auto') {
 				let th = this.tableHeaderCenter.querySelector('th[col-idx="'+idx+'"]');
 				let td = this.tableBodyCenter.querySelector('td[col-idx="'+idx+'"]');
@@ -539,7 +583,7 @@ export class Grid {
 	render(): void {
 		this.createHeader();
 		if (this.gridOptions.rowData.length > 0) {
-			this.createBodyData(this.gridOptions.rowData, 0, 0, '');		
+			this.createBodyData(this.gridOptions.rowData, 0, 0, '');
 			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
@@ -558,7 +602,8 @@ export class Grid {
 		return out;
 	}
 	expandCollapseChildren(obj) {
-		var pid = obj.trDomElem.getAttribute('pid');
+		let pid = obj.trDomElem.getAttribute('pid');
+
 		if (obj.isExpand) {
 			let row = this.getRowDataObj(obj.level, obj.rowIndex, obj.parentRowIndex, obj.trDomElem, pid);
 			this.renderChildrenDataRows(row, obj.level + 1, obj.rowIndex, pid);
@@ -569,20 +614,8 @@ export class Grid {
 	removeChildrenDataRows(rowIndex, lvl, pid) {
 		$(this.tableBodyLeft).find('tr[pid^="'+ pid  +'-"]').remove();
 		$(this.tableBodyCenter).find('tr[pid^="'+ pid  +'-"]').remove();
-		// $(this.tableBodyLeft).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
-		// $(this.tableBodyCenter).find('tr[pr-idx="'+ rowIndex  +'"][lvl="'+ lvl +'"]').remove();
 	}
 	processData(rows, parentNode, level) {
-		// rows.forEach(function(row,idx) {
-		// 	row.parent = parentNode;
-		// 	row.level = level;
-		// 	row.childIndex = idx;
-
-		// 	if ( typeof(row.children) !== undefined &&  row.children instanceof Array ) {
-		// 		this.processData(row.children, row, level + 1);
-		// 	}
-		// },this);
-		// return rows;
 		return rows.map((row, idx) => {
 			row.parent = parentNode;
 			row.level = level;
@@ -596,7 +629,7 @@ export class Grid {
 		});
 	}
 	setDataRow(dataRow) {
-		if (dataRow.length > 0) {			
+		if (dataRow.length > 0) {
 			// this.gridOptions.rowData = dataRow;
 			this.removeData(0, 0);
 			// this.gridOptions.rowData = dataRow; //.slice(0,200) ;	
@@ -617,12 +650,12 @@ export class Grid {
 	setEvents() {
 		let currentLeft = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
-
+		this.initSortWebWorker();
 		let onScrollEvent = function(event) {
 			let scrollLeft = event.currentTarget.scrollLeft;
 			// if ( currentLeft !== scrollLeft ) {
 				currentLeft = scrollLeft;
-				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';				
+				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';
 			// }
 		}
 		this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
@@ -636,23 +669,34 @@ export class Grid {
 			sortingDir = sortingDir === 'asc' ? 'desc' : 'asc';
 
 			if (columnDef.sortable) {
-				console.info('start sorting=' + columnDef.field +'; dir = ' + sortingDir);
+				// let startTime = Date.now();
 				let ascDesc = '.' + SortClasses.SORT_ASC +', .' +  SortClasses.SORT_DESC;
 				$(this.headerContainerInnerLeft).find(ascDesc).hide();
 				$(this.headerContainerInnerCenter).find(ascDesc).hide();
 
-				if (this.gridOptions.onSort) {
-					this.gridOptions.onSort(columnDef.field,sortingDir);
+				if (sortingDir === 'asc') {
+					$(th).find('.' + SortClasses.SORT_ASC ).show();
 				} else {
-					this.sortData(columnDef.field,sortingDir);
-
-					if (sortingDir === 'asc') {
-						$(th).find('.' + SortClasses.SORT_ASC ).show();
-					} else {
-						$(th).find('.' + SortClasses.SORT_DESC).show();						
-					}
+					$(th).find('.' + SortClasses.SORT_DESC).show();
 				}
-				console.info('done sorting=' + columnDef.field +'; dir = ' + sortingDir);
+
+				let sortFun = this.gridOptions.onSort ? this.gridOptions.onSort : this.sortDataFun;
+				let param = {rowData: this.gridOptions.rowData ,field: columnDef.field, sortingDir, sortFunc: sortFun.toString() };
+				// setTimeout( () => {
+					this.sortWebWorker.postMessage( param );
+					// this.sortWebWorker.postMessage({field: columnDef.field, sortingDir });
+				// },100);
+
+
+				// let sortedData: any;
+				// if (this.gridOptions.onSort) {
+				// 	sortedData = this.gridOptions.onSort(columnDef.field,sortingDir);
+				// } else {
+				// 	sortedData = this.sortData(columnDef.field, sortingDir);
+				// }
+				// this.setDataRow( sortedData );
+
+				// console.info( 'sorting time elapse ', ( Date.now() - startTime ), 'ms' );
 			}
 		}
 

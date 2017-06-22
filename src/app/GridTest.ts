@@ -59,18 +59,11 @@ export class GridTest {
     }
     onReady(event) {
         console.info('GridTest onReady')
-        // document.querySelector('#loadAthletes').addEventListener('click',this.loadAthletes.bind(this));
-        // document.querySelector('#loadAthletesDef').addEventListener('click',this.loadAthletesDef.bind(this));
-        // document.querySelector('#loadFilesDef').addEventListener('click',this.loadFilesDef.bind(this));
-        // document.querySelector('#loadFiles').addEventListener('click',this.loadGroup.bind(this) );
         document.querySelector('#loadWW').addEventListener('click',this.loadWebWorker.bind(this) );
-        document.querySelector('#stopWW').addEventListener('click',this.stopWebWorker.bind(this) );
-        
+        document.querySelector('#stopWW').addEventListener('click',this.stopWebWorker.bind(this) );        
         this.grid = new Grid('#mygrid-test', this.gridOptions);
         this.grid2 = new Grid('#mygrid-test2', this.gridOptions2);
-        // this.loadFilesDef();
         this.loadGroup();
-        // this.loadAthletesDef();
         this.loadAthletes();
     }
     loadWebWorker(){
@@ -87,13 +80,13 @@ export class GridTest {
     // }
     sampleWebWorker(){
         self.addEventListener('message', function( e ){
-            console.info('message past to start',e );
+            console.info('message pass to start',e );
         });
 
         let ctr = 0;
-        // setInterval( () => {
-        //     postMessage( 'count ' + ctr++ );
-        // },200);
+        setInterval( () => {
+            postMessage( 'count ' + ctr++ );
+        },200);
     }
     stopWebWorker(){
         this.webWorker.terminate();
@@ -124,7 +117,7 @@ export class GridTest {
         }).then( (result: any ) => {
             if (result){
                 this.bigData = result.data;
-                this.gridOptions.api.setDataRow(result.data.slice(0,200) );
+                this.gridOptions.api.setDataRow(result.data.slice(0,2000) );
             }
         })
         // fetch('/data/olympicAthletes.json')
