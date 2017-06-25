@@ -1,5 +1,5 @@
 import {Grid } from './mygrid/mygrid';
-import {Observable } from 'rxjs';
+// import {Observable } from 'rxjs';
 declare var fetch: any;
 declare var postMessage: any;
 
@@ -66,19 +66,18 @@ export class GridTest {
         this.loadGroup();
         this.loadAthletes();
     }
-    loadWebWorker(){
+    loadWebWorker() {
         // this.webWorker = this.wwLoader(this.sampleWebWorker);
         this.webWorker = new Worker(URL.createObjectURL(new Blob(['('+ this.sampleWebWorker +')()'])));
         this.webWorker.onmessage = this.acceptMessage;
-
-        setTimeout(()=>{
+        setTimeout(()=> {
             this.webWorker.postMessage('start the thread');
         },500);
     }
     // wwLoader (fn ) {
     //     return new Worker(URL.createObjectURL(new Blob(['('+ fn +')()'])));
     // }
-    sampleWebWorker(){
+    sampleWebWorker() {
         self.addEventListener('message', function( e ){
             console.info('message pass to start',e );
         });
@@ -88,10 +87,10 @@ export class GridTest {
             postMessage( 'count ' + ctr++ );
         },200);
     }
-    stopWebWorker(){
+    stopWebWorker() {
         this.webWorker.terminate();
     }
-    acceptMessage( msg ){
+    acceptMessage( msg ) {
         console.info('got message ', msg.data);
     }
     loadAthletes() {
@@ -102,7 +101,8 @@ export class GridTest {
             this.gridOptions.pinnedLeftCount = 1;
             resolve('definition-loded')
         })).then( result => {
-            if (result === 'definition-loded' ){
+            this.gridOptions.api.showBusyIcon();
+            if (result === 'definition-loded' ) {
                 return (new Promise( (resolve, reject) => {
                     fetch('/data/olympicAthletes.json')
                     .then(response => response.json())
@@ -115,9 +115,11 @@ export class GridTest {
                 }));
             }
         }).then( (result: any ) => {
-            if (result){
+            if (result) {
                 this.bigData = result.data;
                 this.gridOptions.api.setDataRow(result.data.slice(0,2000) );
+                this.gridOptions.api.hideBusyIcon();
+                
             }
         })
         // fetch('/data/olympicAthletes.json')
@@ -140,12 +142,14 @@ export class GridTest {
             this.gridOptions2.isDataAlreadyGrouped = true;
             this.gridOptions2.pinnedLeftCount=1;
             this.gridOptions2.api.setColumnDefs(this.filesColumnDefs);
+            this.gridOptions2.api.showBusyIcon();
             resolve('definition-loded')
         })).then( result => {
             fetch('/data/group.json')
             .then(response => response.json() )
             .then(data => {
                 this.gridOptions2.api.setDataRow(data.data);
+                this.gridOptions2.api.hideBusyIcon();
             })
             .catch(err => {
                 console.log('fail');

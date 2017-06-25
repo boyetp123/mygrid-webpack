@@ -28,6 +28,7 @@ export class Grid {
 	headerContainerInnerCenter: any;
 	bodyContainerCenter: any;
 	bodyContainerYscrollCenter: any;	
+	busyLoader: any;
 
 	theGridLeft: any;
 	headerLeftPane: any;
@@ -65,7 +66,7 @@ export class Grid {
 							innerHTMLs.push( '<tr>' );
 								innerHTMLs.push( '<td class="left-pane" style="display:none">' );
 
-									innerHTMLs.push( '<div class="mygrid-left">' );	
+									innerHTMLs.push( '<div class="mygrid-left">' );
 										innerHTMLs.push( '<div class="mygrid-header">' );
 											innerHTMLs.push( '<div class="mygrid-header-inner">' );
 												innerHTMLs.push( '<table><thead><tr></tr></thead></table>' );
@@ -231,7 +232,9 @@ export class Grid {
 	setUpAPI() {
 		this.gridOptions.api = {
 			setDataRow : this.setDataRow.bind(this),
-			setColumnDefs : this.setColumnDefs.bind(this)
+			setColumnDefs : this.setColumnDefs.bind(this),
+			showBusyIcon: this.showBusyIcon.bind(this),
+			hideBusyIcon: this.hideBusyIcon.bind(this)
 		};		
 	}
 	setColumnDefs(colDefs:ColumnDef[]) {
@@ -268,7 +271,7 @@ export class Grid {
 				}
 			},this);
 		}
-		console.info('arrLeft.length ',arrLeft.length , arrLeft)
+		// console.info('arrLeft.length ',arrLeft.length , arrLeft)
 		if (arrLeft.length > 0) {
 			this.showElement(this.headerLeftPane);
 			this.tableHeaderLeft.innerHTML = '<tr>' + arrLeft.join('') + '</tr>';
@@ -421,7 +424,7 @@ export class Grid {
 			if (obj.left) {
 				arrLeft.push(obj.left)
 			}
-		},this);	
+		}, this);
 				
 		// if (arrLeft.length > 0) {
 		// 	$(this.tableBodyLeft).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after( arrLeft.join('') );
@@ -452,7 +455,7 @@ export class Grid {
 			let cH = tdCenter.offsetHeight;
 			
 			if (tdleft && tdCenter && lH !== cH ) {
-				console.info('equalizing height');
+				// console.info('equalizing height');
 				let maxHeight = Math.max( cH , lH );
 				tdleft.style.height =  tdCenter.style.height = maxHeight + 'px';
 			}
@@ -463,7 +466,7 @@ export class Grid {
 	initSortWebWorker(): void {
 		let sortFun = () => {
 			self.addEventListener('message', ( e ) => {
-				console.info('message past to start sorting', e.data );
+				// console.info('message past to start sorting', e.data );
 				let data = e.data ;
 				let field: string = data.field;
 				let sortingDir: string = data.sortingDir;
@@ -481,7 +484,7 @@ export class Grid {
 			});
 		}
 		let strFun = '('+ sortFun +')()';
-		console.info('strFun', strFun);
+		// console.info('strFun', strFun);
         // this.sortWebWorker = new Worker(URL.createObjectURL(new Blob(['('+ sortFun +')()'])));
         this.sortWebWorker = new Worker(URL.createObjectURL(new Blob([strFun])));
         this.sortWebWorker.onmessage = this.onSortDone.bind(this);
@@ -489,6 +492,7 @@ export class Grid {
 	onSortDone( msg ): void {
 		console.info('onSortDone', msg.data )
 		this.setDataRow( msg.data.sortedData );
+		this.hideBusyIcon();
 	}
 	// sortData(field:string, sortDir:string): any {
 	// 	let sortFun = (a,b) => {
@@ -564,7 +568,6 @@ export class Grid {
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
-			
 	}
 	alignHeadersAndDataCellsColumnWidths():void {
 		this.columnDefs.forEach( (columnDef, idx, arr) => {
@@ -591,9 +594,9 @@ export class Grid {
 		let levelRows:any = parentId.split('-');
 		let out:any = this.gridOptions.rowData;
 
-		for (var i=0; i < levelRows.length; i++){
+		for (let i=0; i < levelRows.length; i++) {
 			let lr = levelRows[ i ].split('|');
-			if (  out.children ){
+			if (  out.children ) {
 				out = out.children[ Number( lr[1] ) ];
 			} else {
 				out = out[ Number( lr[1] ) ];
@@ -669,6 +672,7 @@ export class Grid {
 			sortingDir = sortingDir === 'asc' ? 'desc' : 'asc';
 
 			if (columnDef.sortable) {
+				this.showBusyIcon();
 				// let startTime = Date.now();
 				let ascDesc = '.' + SortClasses.SORT_ASC +', .' +  SortClasses.SORT_DESC;
 				$(this.headerContainerInnerLeft).find(ascDesc).hide();
@@ -682,10 +686,10 @@ export class Grid {
 
 				let sortFun = this.gridOptions.onSort ? this.gridOptions.onSort : this.sortDataFun;
 				let param = {rowData: this.gridOptions.rowData ,field: columnDef.field, sortingDir, sortFunc: sortFun.toString() };
-				// setTimeout( () => {
+				setTimeout( () => {
 					this.sortWebWorker.postMessage( param );
 					// this.sortWebWorker.postMessage({field: columnDef.field, sortingDir });
-				// },100);
+				},10);
 
 
 				// let sortedData: any;
@@ -699,10 +703,26 @@ export class Grid {
 				// console.info( 'sorting time elapse ', ( Date.now() - startTime ), 'ms' );
 			}
 		}
-
 		this.gridBody.addEventListener('click',this.onBodyClick.bind(this));
 		this.headerContainerInnerLeft.addEventListener("click",onClickHeader.bind(this));
 		this.headerContainerInnerCenter.addEventListener("click",onClickHeader.bind(this));
+	}
+	showBusyIcon(): void {
+		console.info('showBusyIcon')
+		// setTimeout( ()=> {
+			if (!this.busyLoader) {
+				this.busyLoader = document.createElement('DIV');
+				this.busyLoader.className = "loading-animator";
+				this.theGrid.appendChild( this.busyLoader );
+			}
+			this.showElement( this.busyLoader );
+		// }, 0);
+	}
+	hideBusyIcon( ):void {
+		console.info('hideBusyIcon')
+		setTimeout( ()=> {
+			this.hideElement( this.busyLoader );
+		}, 10);
 	}
 	showElement(el) {
 		if (el) {
