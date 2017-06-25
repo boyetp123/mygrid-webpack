@@ -81,6 +81,7 @@ export interface GridOptions {
 	isDataAlreadyGrouped:boolean
 }
 
+// tslint:disable-next-line:class-name
 export interface rowObject {
 	data: any,
 	group: boolean,
