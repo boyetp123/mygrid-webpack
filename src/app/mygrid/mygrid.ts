@@ -490,7 +490,7 @@ export class Grid {
         this.sortWebWorker.onmessage = this.onSortDone.bind(this);
 	}
 	onSortDone( msg ): void {
-		console.info('onSortDone', msg.data )
+		// console.info('onSortDone', msg.data )
 		this.setDataRow( msg.data.sortedData );
 		this.hideBusyIcon();
 	}
@@ -708,7 +708,7 @@ export class Grid {
 		this.headerContainerInnerCenter.addEventListener("click",onClickHeader.bind(this));
 	}
 	showBusyIcon(): void {
-		console.info('showBusyIcon')
+		// console.info('showBusyIcon')
 		// setTimeout( ()=> {
 			if (!this.busyLoader) {
 				this.busyLoader = document.createElement('DIV');
@@ -719,7 +719,7 @@ export class Grid {
 		// }, 0);
 	}
 	hideBusyIcon( ):void {
-		console.info('hideBusyIcon')
+		// console.info('hideBusyIcon')
 		setTimeout( ()=> {
 			this.hideElement( this.busyLoader );
 		}, 10);
