@@ -1,16 +1,20 @@
 /*
 	do sorting on the web workers
 */
-declare var $: any;
-declare var numeral: any;
-declare var moment: any;
-declare var postMessage: any;
 
 // import {ColumnDef, GridOptions, SortClasses, DefaultFormats, rowObject, 
 // 		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
 
 import {ColumnDef, GridOptions, SortClasses, rowObject, 
 		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
+// import moment  from 'moment';
+// import numeral from 'numeraljs';
+// import $ from 'jquery';
+
+declare var $: any;
+declare var numeral: any;
+declare var moment: any;
+declare var postMessage: any;
 
 export class Grid {
 	gridContainer: any;
