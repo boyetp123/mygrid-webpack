@@ -1,15 +1,16 @@
 /*
 	do sorting on the web workers
 */
-
+/*
+ import moment  from 'moment';
+ import numeral from 'numeraljs';
+ import $ from 'jquery';
+*/
 // import {ColumnDef, GridOptions, SortClasses, DefaultFormats, rowObject, 
 // 		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
 
 import {ColumnDef, GridOptions, SortClasses, rowObject, 
 		GridHdrClasses, HAlignmentClasses} from './mygridDefs';
-// import moment  from 'moment';
-// import numeral from 'numeraljs';
-// import $ from 'jquery';
 
 declare var $: any;
 declare var numeral: any;
