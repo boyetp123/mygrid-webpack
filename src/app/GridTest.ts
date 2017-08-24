@@ -2,6 +2,7 @@ import {Grid } from './mygrid/mygrid';
 // import {Observable } from 'rxjs';
 declare var fetch: any;
 declare var postMessage: any;
+declare var Promise: any;
 
 export class GridTest {
     atheleteColumnDefs: any = [
@@ -117,7 +118,7 @@ export class GridTest {
         }).then( (result: any ) => {
             if (result) {
                 this.bigData = result.data;
-                this.gridOptions.api.setDataRow(result.data.slice(0,2000) );
+                this.gridOptions.api.setDataRow(result.data.slice(0,1000) );
                 this.gridOptions.api.hideBusyIcon();
                 
             }

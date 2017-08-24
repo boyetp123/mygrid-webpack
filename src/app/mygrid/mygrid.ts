@@ -464,6 +464,7 @@ export class Grid {
 		// console.info('using array total time for ' + len + ' records ' + ( (endTime - startTime)/1000 ) + ' secs');
 	}
 	initSortWebWorker(): void {
+		let self: any;
 		let sortFun = () => {
 			self.addEventListener('message', ( e ) => {
 				// console.info('message past to start sorting', e.data );
