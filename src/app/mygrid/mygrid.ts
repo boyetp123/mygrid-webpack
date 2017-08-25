@@ -471,34 +471,48 @@ export class Grid {
 	initSortWebWorker(): void {
 		let self: any;
 		let sortFun = () => {
+			let sortFunc2: any, sortFunc: any, fparams: any;
+
 			self.addEventListener('message', ( e ) => {
 				// console.info('message past to start sorting', e.data );
 				let data = e.data ;
-				let field: string = data.field;
-				let sortingDir: string = data.sortingDir;
-				// let rowData = data.rowData;
-				let str: string = data.sortFunc;
-				let fparams = str.match(/\(.*\)/g)[0].replace(/\(|\)/g,'').split(',');
-				// let firstIdx = str.indexOf('{') ;
-				// let lastIdx = str.lastIndexOf('}');
-				let fbody = str.substring( str.indexOf('{') + 1, str.lastIndexOf('}') ).trim();
-				let sortFunc = new Function(fparams[0], fparams[1], fbody);
-				let sortFunc2 = sortFunc(field, sortingDir);
-				// console.info('rowData',rowData.length)
-				let sortedData = data.rowData.sort(sortFunc2);
-				postMessage({sortedData: sortedData });
+				let sortedData;
+				// let field: string = data.field;
+				// let sortingDir: string = data.sortingDir;
+				if (data.message === 'sort') {
+					// sortFunc2 = sortFunc(field, sortingDir);	
+					sortFunc2 = sortFunc(e.data);	
+					console.info('message past to start sorting', e.data, 'sortFunc2', sortFunc2 );
+					sortedData = data.rowData.sort(sortFunc2);					
+					postMessage({sortedData: sortedData });
+				} else if (data.message === 'setSortFunction') {
+					let str: string = data.sortFunc;
+					fparams = str.match(/\(.*\)/g)[0].replace(/\(|\)/g,'').split(',');
+					let fbody = str.substring( str.indexOf('{') + 1, str.lastIndexOf('}') ).trim();
+					// sortFunc = new Function(fparams[0], fparams[1], fbody);
+					sortFunc = new Function(fparams[0], fbody);
+					postMessage({ });
+				}
 			});
 		}
 		let strFun = '('+ sortFun +')()';
-		// console.info('strFun', strFun);
-        // this.sortWebWorker = new Worker(URL.createObjectURL(new Blob(['('+ sortFun +')()'])));
         this.sortWebWorker = new Worker(URL.createObjectURL(new Blob([strFun])));
         this.sortWebWorker.onmessage = this.onSortDone.bind(this);
 	}
 	onSortDone( msg ): void {
 		// console.info('onSortDone', msg.data )
-		this.setDataRow( msg.data.sortedData );
+		if ( msg.data && msg.data.sortedData ) {
+			this.setDataRow( msg.data.sortedData );			
+		}
 		this.hideBusyIcon();
+	}
+	setSortFun(fun: any = null): void { // if passed null, it will use the default sort function
+		this.gridOptions.onSort = fun;
+		let sortFun = this.gridOptions.onSort ? this.gridOptions.onSort : this.sortDefaultFun;
+		let param = { message:'setSortFunction', sortFunc: sortFun.toString() };
+		setTimeout( () => {
+			this.sortWebWorker.postMessage( param );
+		},10);
 	}
 	// sortData(field:string, sortDir:string): any {
 	// 	let sortFun = (a,b) => {
@@ -520,8 +534,11 @@ export class Grid {
 	// 	};
 	// 	return this.gridOptions.rowData.sort(sortFun); 
 	// }
-	sortDataFun(field:string, sortDir:string): any {
-		let sortFun = (a, b) => {
+	sortDefaultFun( params: any ): any {
+		let field:string = params.field;
+		let sortDir:string = params.sortingDir;
+
+		return (a, b) => {
 			let retval = 0;
 			if (sortDir === 'asc') {
 				if (a[field] > b[field]) {
@@ -538,7 +555,7 @@ export class Grid {
 			}
 			return retval;
 		};
-		return sortFun; 
+		// return sortFun; 
 	}
 	removeData(startRow = 0, endRow = 0): void {
 		if (startRow === 0 && endRow === 0) {
@@ -660,6 +677,8 @@ export class Grid {
 		let currentLeft = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
 		this.initSortWebWorker();
+		this.setSortFun();
+
 		let onScrollEvent = function(event) {
 			let scrollLeft = event.currentTarget.scrollLeft;
 			// if ( currentLeft !== scrollLeft ) {
@@ -690,14 +709,12 @@ export class Grid {
 					$(th).find('.' + SortClasses.SORT_DESC).show();
 				}
 
-				let sortFun = this.gridOptions.onSort ? this.gridOptions.onSort : this.sortDataFun;
-				let param = {rowData: this.gridOptions.rowData ,field: columnDef.field, sortingDir, sortFunc: sortFun.toString() };
+				// let sortFun = this.gridOptions.onSort ? this.gridOptions.onSort : this.sortDefaultFun;
+				// let param = {message:'sort', rowData: this.gridOptions.rowData ,field: columnDef.field, sortingDir, sortFunc: sortFun.toString() };
+				let param = {message:'sort', rowData: this.gridOptions.rowData ,field: columnDef.field, sortingDir };
 				setTimeout( () => {
 					this.sortWebWorker.postMessage( param );
-					// this.sortWebWorker.postMessage({field: columnDef.field, sortingDir });
 				},10);
-
-
 				// let sortedData: any;
 				// if (this.gridOptions.onSort) {
 				// 	sortedData = this.gridOptions.onSort(columnDef.field,sortingDir);
@@ -705,7 +722,6 @@ export class Grid {
 				// 	sortedData = this.sortData(columnDef.field, sortingDir);
 				// }
 				// this.setDataRow( sortedData );
-
 				// console.info( 'sorting time elapse ', ( Date.now() - startTime ), 'ms' );
 			}
 		}
