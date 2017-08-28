@@ -70,6 +70,7 @@ export interface GridOptions {
 	api:Object,
 	onReady?:Function,
 	onSort?:Function,
+	sortOnWebWorker: boolean,
 	rowHeight:string,
 	flexRow?:boolean,
 	disableVerticalScroll?:boolean,

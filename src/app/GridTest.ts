@@ -32,6 +32,7 @@ export class GridTest {
         pinnedLeftCount:1,
         disableVerticalScroll:false,
         disableHorizontalScroll:false,
+        sortOnWebWorker:true,
         onReady:function(api){
             // api.setDataRow( olympicAthletes );
         }
@@ -45,6 +46,7 @@ export class GridTest {
         pinnedLeftCount:1,
         disableVerticalScroll:false,
         disableHorizontalScroll:false,
+        sortOnWebWorker:true,
         onReady:function(api){
             // api.setDataRow( olympicAthletes );
         }
@@ -53,6 +55,7 @@ export class GridTest {
     grid2: Grid;
     bigData: any;
     webWorker: any;
+    wwSwitchSelector: any;
 
     constructor() {
         console.info('GridTest constructor');
@@ -61,11 +64,19 @@ export class GridTest {
     onReady(event) {
         console.info('GridTest onReady')
         document.querySelector('#loadWW').addEventListener('click',this.loadWebWorker.bind(this) );
-        document.querySelector('#stopWW').addEventListener('click',this.stopWebWorker.bind(this) );        
+        document.querySelector('#stopWW').addEventListener('click',this.stopWebWorker.bind(this) );      
+        this.wwSwitchSelector = document.querySelector('#use-ww-on-sort');
+        this.wwSwitchSelector.addEventListener('change',this.switchWW.bind(this) );      
+         
         this.grid = new Grid('#mygrid-test', this.gridOptions);
         this.grid2 = new Grid('#mygrid-test2', this.gridOptions2);
         this.loadGroup();
         this.loadAthletes();
+        this.switchWW();
+    }
+    switchWW(event?) {
+        // console.info(this.wwSwitchSelector.value)
+        this.gridOptions.sortOnWebWorker =( Number( this.wwSwitchSelector.value ) === 1 );
     }
     loadWebWorker() {
         // this.webWorker = this.wwLoader(this.sampleWebWorker);
