@@ -46,13 +46,15 @@ export class Grid {
 	tableBodyLeft: any;	
 	hasInitCcompleted: boolean;
 	sortWebWorker: any;
+	// scrollbars
+	hScrollBarContainer: any;
 	
 	constructor(selector:string, gridOptions:GridOptions ) {
 		this.hasInitCcompleted = false;
 		this.gridContainer = document.querySelector(selector);
 		this.setUpProperties(gridOptions)
 		this.createGridContainers();
-		this.setUpWidths();	
+		this.setUpGridDimensions();	
 		this.render();
 		this.setUpAPI();
 		this.setEvents();
@@ -144,7 +146,10 @@ export class Grid {
 							innerHTMLs.push( '</tr>'	);	
 						innerHTMLs.push( '</tbody>' );		
 					innerHTMLs.push( '</table>' );
-				innerHTMLs.push( '</div>' );						
+				innerHTMLs.push( '</div>' );	// <div class="mygrid-scroll-container-body">
+				innerHTMLs.push( '<div class="mygrid-hscrollbar-container">' );
+					innerHTMLs.push('this will be the horizontal scroller')
+				innerHTMLs.push( '</div>' );	// <div class="mygrid-scroller">
 		innerHTMLs.push( '</div>');	
 
 		this.gridContainer.innerHTML = innerHTMLs.join('');
@@ -179,13 +184,37 @@ export class Grid {
 		this.bodyContainerCenter = this.theGridCenter.querySelector('div.mygrid-body'); 
 		this.bodyContainerYscrollCenter = this.bodyContainerCenter.querySelector('div.mygrid-body-y-scroll'); 
 		this.tableBodyCenter = this.bodyContainerYscrollCenter.querySelector('table > tbody');
+
+		// scrollbars
+		this.hScrollBarContainer = this.theGrid.querySelector('div.mygrid-hscrollbar-container');
+		
 		
 	}
-	setUpWidths(): void {
+	setUpGridDimensions(): void {
 		let scrollerBarWidth = 8;
 		let gridOptions = this.gridOptions;
+		let hScrollBarContainerHeight = this.hScrollBarContainer.offsetHeight;
+		gridOptions.height = gridOptions.height || 'auto';
 		this.theGrid.style.width = ((parseInt(gridOptions.width) + scrollerBarWidth) + 'px') || 'auto';
-		this.theGrid.style.height = !gridOptions.disableVerticalScroll ?( this.gridOptions.height || 'auto') : 'auto';
+		// this.theGrid.style.height = !gridOptions.disableVerticalScroll ?( this.gridOptions.height || 'auto') : 'auto';
+		
+		if ( gridOptions.height !== 'auto' && !gridOptions.disableVerticalScroll) {
+			let gridParamHeight = parseInt(gridOptions.height);
+			let unit = gridOptions.height.replace('' + gridParamHeight, '');
+			this.theGrid.style.height =  (gridParamHeight + hScrollBarContainerHeight) + unit;
+		} else {
+			this.theGrid.style.height = 'auto';
+		}
+
+		if (!gridOptions.disableVerticalScroll) {
+			// let achars = this.gridOptions.height.regexp()
+			let unit = 'px';
+			this.theGrid.style.height = (hScrollBarContainerHeight + parseInt(this.gridOptions.height)) + unit;
+		} else {
+			this.theGrid.style.height = 'auto';
+		}
+		// this.theGrid.style.height = !gridOptions.disableVerticalScroll ?( this.gridOptions.height || 'auto') : 'auto';
+
 		let totalGridWidth = this.theGrid.offsetWidth - scrollerBarWidth;
 		// let pinnedLeftCount = this.gridOptions.pinnedLeftCount;
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
@@ -259,7 +288,7 @@ export class Grid {
 					);
 		});
 		if (this.hasInitCcompleted) {
-			this.setUpWidths();
+			this.setUpGridDimensions();
 			this.render();
 		}
 	}	
@@ -285,7 +314,9 @@ export class Grid {
 		this.tableHeaderCenter.innerHTML = '<tr>' + arrCenter.join('') + '</tr>';
 		
 		if (!this.gridOptions.disableVerticalScroll) {
-			this.gridBody.style.height = ( this.theGrid.offsetHeight - this.gridHeader.offsetHeight ) + 'px';
+			this.gridBody.style.height = ( this.theGrid.offsetHeight 
+											- this.gridHeader.offsetHeight 
+											- this.hScrollBarContainer.offsetHeight ) + 'px';
 		} else {
 			this.gridBody.style.height = this.bodyContainerCenter.style.height ='auto';
 		}
