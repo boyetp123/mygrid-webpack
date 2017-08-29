@@ -472,11 +472,6 @@ export class Grid {
 			}
 		}, this);
 				
-		// if (arrLeft.length > 0) {
-		// 	$(this.tableBodyLeft).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after( arrLeft.join('') );
-		// }
-		// $(this.tableBodyCenter).find('tr[r-idx="'+ rowData.childIndex  +'"][lvl="'+rowData.level+'"]').after(arrCenter.join(''));
-
 		if (arrLeft.length > 0) {
 			$(this.tableBodyLeft).find('tr[pid="'+ pid +'"]').after( arrLeft.join('') );
 		}
@@ -485,7 +480,6 @@ export class Grid {
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
-		// this.bodyContainerLeft.style.height = (this.bodyContainerCenter.clientHeight) + 'px'; 
 	}	
 	equalizeBodyHeights(): void {
 		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
@@ -518,10 +512,7 @@ export class Grid {
 				// console.info('message past to start sorting', e.data );
 				let data = e.data ;
 				let sortedData;
-				// let field: string = data.field;
-				// let sortingDir: string = data.sortingDir;
 				if (data.message === 'sort') {
-					// sortFunc2 = sortFunc(field, sortingDir);	
 					sortFunc2 = sortFunc(e.data);	
 					console.info('message past to start sorting', e.data, 'sortFunc2', sortFunc2 );
 					sortedData = data.rowData.sort(sortFunc2);					
