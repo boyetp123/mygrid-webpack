@@ -6,7 +6,7 @@ declare var Promise: any;
 
 export class GridTest {
     atheleteColumnDefs: any = [
-        {headerName: 'Athlete', field: 'athlete', width: '100px', sortable:true, sort: 'desc'},
+        {headerName: 'Athlete', field: 'athlete', width: '120px', sortable:true, sort: 'desc'},
         {headerName: 'Age', field: 'age', width: '90px' ,type:'number', sortable:true, format:'0'},
         {headerName: 'Country', field: 'country', width: '120px', sortable:true},
         {headerName: 'Year', field: 'year', width: '90px' ,type:'number', format:'0', sortable:true },

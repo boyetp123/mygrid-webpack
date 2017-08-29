@@ -144,14 +144,14 @@ div.mygrid div.mygrid-hscrollbar-container-right {
 	width: 0px;
 	box-sizing: border-box;
 	border: none;
-	height: 100%;
+	height: inherit;
 	float: left;
 }
 div.mygrid div.mygrid-hscrollbar-container-left .scroll-content,
 div.mygrid div.mygrid-hscrollbar-container-center .scroll-content,
 div.mygrid div.mygrid-hscrollbar-container-right .scroll-content {
 	height: 100%;	
-	position: relative;
+	height: inherit;
 }
 
 
