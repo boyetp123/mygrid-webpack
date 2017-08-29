@@ -62,11 +62,11 @@ div.mygrid  table .grouped-icons .group-expand {
 	display: inline-block;
 }
 div.mygrid > table{
-	width:100%;
+	min-width:100%;
 	border-collapse: collapse;
 }	
 div.mygrid  div.mygrid-header {
-	width:100%;
+	min-width:100%;
 	border-bottom: 1px solid black;
 }
 div.mygrid div.mygrid-center div.mygrid-header {
@@ -132,6 +132,39 @@ div.mygrid  div.mygrid-body > div.mygrid-body-y-scroll > table > tbody > tr:nth-
 div.mygrid div.mygrid-header th.sortable{
 	cursor: pointer;
 }
+.mygrid-hscrollbar-container {
+	height: 10px;	
+}
+div.mygrid div.mygrid-hscrollbar-container-left,
+div.mygrid div.mygrid-hscrollbar-container-center,
+div.mygrid div.mygrid-hscrollbar-container-right {
+	/* display: inline-block; */
+	overflow-y: hidden;
+	overflow-x: auto;
+	width: 0px;
+	box-sizing: border-box;
+	border: none;
+	height: 100%;
+	float: left;
+}
+div.mygrid div.mygrid-hscrollbar-container-left .scroll-content,
+div.mygrid div.mygrid-hscrollbar-container-center .scroll-content,
+div.mygrid div.mygrid-hscrollbar-container-right .scroll-content {
+	height: 100%;	
+	position: relative;
+}
+
+
+/* div.mygrid div.mygrid-hscrollbar-container-left {
+	width: 100px;
+}
+div.mygrid div.mygrid-hscrollbar-container-center {
+	width: 700px;
+}
+div.mygrid div.mygrid-hscrollbar-container-center .scroll-content {
+	width: 1100px;
+} */
+
 
 .text-right{
 	text-align: right;
