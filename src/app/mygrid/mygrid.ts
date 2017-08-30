@@ -380,21 +380,18 @@ export class Grid {
 			// 					this.gridOptions.icons.groupExpanded + '</div>' ;
 			// groupedIcon = '<div class="grouped-icons">' + groupCollapsed + groupExpanded  + '</div>';
 			// tslint: ignore
-			let groupCollapsed: any = document.createElement('div', {
-				'class': 'group-collapse', 
-				'style': 'display:' + ( !rowObj.expanded?'':'none' )
-			}); 
+			let groupCollapsed: any = document.createElement('div'); 
+			groupCollapsed.setAttribute('class', 'group-collapse');
+			groupCollapsed.setAttribute('style', 'display:' + ( !rowObj.expanded?'':'none' ));
 			groupCollapsed.innerHTML = this.gridOptions.icons.groupCollapsed;
 
-			let groupExpanded: any = document.createElement('div', {
-				'class': 'group-expand', 
-				'style': 'display:' + ( rowObj.expanded?'':'none' )
-			}); 
-			groupCollapsed.innerHTML = this.gridOptions.icons.groupExpanded;
+			let groupExpanded: any = document.createElement('div'); 
+			groupExpanded.setAttribute('class', 'group-expand');
+			groupExpanded.setAttribute('style', 'display:' + ( rowObj.expanded?'':'none' ));
+			groupExpanded.innerHTML = this.gridOptions.icons.groupExpanded;
 			
-			groupedIcon = document.createElement('div', {
-				'class': 'grouped-icons'
-			});
+			groupedIcon = document.createElement('div');
+			groupedIcon.setAttribute('class', 'grouped-icons');
 			groupedIcon.appendChild(groupCollapsed);
 			groupedIcon.appendChild(groupExpanded);
 		} 
@@ -444,14 +441,13 @@ export class Grid {
 		// 				groupedIcon + val +
 		// 			 '</div>'+
 		// 		'</td>';
-		let out = document.createElement('td',{
-			'class': classArr.join(' '),
-			'style': styleArr.join(';'),
-			'col-idx': colIndex
-		});
-		let out1 = document.createElement('div', {
-			'style': styleArr.join(';')
-		});
+		let out = document.createElement('td');
+		out.setAttribute( 'class', classArr.join(' ') );
+		out.setAttribute( 'style', styleArr.join(';') );
+		out.setAttribute( 'col-idx', colIndex );
+
+		let out1 = document.createElement('div');
+		out1.setAttribute( 'style', styleArr.join(';') );
 		if (groupedIcon) {
 			out1.appendChild( groupedIcon );			
 		}
@@ -462,50 +458,50 @@ export class Grid {
 
 	}
 	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
-		let styleArr:Array<string> = [];
-		let arrCenter:Array<string> = [];
-		let arrLeft:Array<string> = [];
+		// let styleArr:Array<string> = [];
+		// let arrCenter:Array<string> = [];
+		// let arrLeft:Array<string> = [];
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
-		let returnObj:any = {};
-		let rowStr = '';
+		let returnObj: any = {};
+		let centerCount = 0, leftCount = 0;
+		// let rowStr = '';
 		parentId = parentId || '';
 		let pid = (parentId ? parentId + '-' : '') + row.level + '|' + row.childIndex;
-		let trLeft = document.createElement('tr', {
-			'pid': pid + '',
-			'style': styleArr.join(';'),
-			'pr-idx': '' + parentRowIndex,
-			'lvl': ''+ rowGroupLevel,
-			'r-idx': '' + rowIndex
-		});
-		let trCenter = document.createElement('tr', {
-			'pid': pid + '',
-			'style': styleArr.join(';'),
-			'pr-idx': '' + parentRowIndex,
-			'lvl': ''+ rowGroupLevel,
-			'r-idx': '' + rowIndex
-		});
+		let trLeft = document.createElement('tr');
+		trLeft.setAttribute('pid', pid );
+		trLeft.setAttribute('pr-idx', parentRowIndex);
+		trLeft.setAttribute('lvl', rowGroupLevel);
+		trLeft.setAttribute('r-idx', rowIndex);
+
+		let trCenter = document.createElement('tr');
+		trCenter.setAttribute('pid', pid );
+		trCenter.setAttribute('pr-idx', parentRowIndex);
+		trCenter.setAttribute('lvl', rowGroupLevel);
+		trCenter.setAttribute('r-idx', rowIndex);
 	
 		this.columnDefs.forEach((colDef, colIdx) => {
 			let rowData = row;
 			if (pinnedLeftCount - 1 >= colIdx ) {
-				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel);			
-				arrLeft.push( rowStr );
-				trLeft.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) )
+				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel);			
+				// arrLeft.push( rowStr );
+				trLeft.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel) );
+				 leftCount ++;
 			} else {
-				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel );			
-				arrCenter.push( rowStr );
-				trCenter.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) )
+				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel );			
+				// arrCenter.push( rowStr );
+				trCenter.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) );
+				centerCount++;
 			}
 		},this);			
 		
-		if (arrCenter.length > 0) {
-			returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
-							'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
+		if ( centerCount > 0) {
+			// returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
+			// 				'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
 			returnObj.centerEl = trCenter;						
 		}
-		if (arrLeft.length > 0) {
-			returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
-							'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
+		if ( leftCount > 0) {
+			// returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
+			// 				'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
 			returnObj.leftEl = trLeft;						
 		}
 		return 	returnObj;	
