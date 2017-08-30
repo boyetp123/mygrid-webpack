@@ -16,7 +16,6 @@ declare var $: any;
 declare var numeral: any;
 declare var moment: any;
 declare var postMessage: any;
-declare var document: any;
 
 export class Grid {
 	gridContainer: any;
@@ -363,7 +362,7 @@ export class Grid {
 	}	
 	createDataCell(rowObj: rowObject, colDef: ColumnDef,
 				rowIndex: number, colIndex: number, isFirst: boolean,
-				rowGroupLevel: number): any {
+				rowGroupLevel: number): string {
 		let row = rowObj.data || rowObj;
 		let val = row.hasOwnProperty(colDef.field)  ? row[ <string>colDef.field ]: '';
 		let styleArr:Array<string> = [];
@@ -371,32 +370,14 @@ export class Grid {
 		let classArr:Array<string> = ['grid-cell'];
 		let isGrouped = rowObj.group && this.gridOptions.isGrouped;
 		let isDataAlreadyGrouped = this.gridOptions.isDataAlreadyGrouped;
-		let groupedIcon: any ;
+		let groupedIcon = '';
 
 		if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
-			// let groupCollapsed = '<div class="group-collapse" style="display:'+ 
-			// 	( !rowObj.expanded?'':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</div>'; 
-			// let groupExpanded =  '<div class="group-expand" style="display:'+(rowObj.expanded?'':'none')+'">' + 
-			// 					this.gridOptions.icons.groupExpanded + '</div>' ;
-			// groupedIcon = '<div class="grouped-icons">' + groupCollapsed + groupExpanded  + '</div>';
-			// tslint: ignore
-			let groupCollapsed: any = document.createElement('div', {
-				'class': 'group-collapse', 
-				'style': 'display:' + ( !rowObj.expanded?'':'none' )
-			}); 
-			groupCollapsed.innerHTML = this.gridOptions.icons.groupCollapsed;
-
-			let groupExpanded: any = document.createElement('div', {
-				'class': 'group-expand', 
-				'style': 'display:' + ( rowObj.expanded?'':'none' )
-			}); 
-			groupCollapsed.innerHTML = this.gridOptions.icons.groupExpanded;
-			
-			groupedIcon = document.createElement('div', {
-				'class': 'grouped-icons'
-			});
-			groupedIcon.appendChild(groupCollapsed);
-			groupedIcon.appendChild(groupExpanded);
+			let groupCollapsed = '<div class="group-collapse" style="display:'+ 
+				( !rowObj.expanded?'':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</div>'; 
+			let groupExpanded =  '<div class="group-expand" style="display:'+(rowObj.expanded?'':'none')+'">' + 
+								this.gridOptions.icons.groupExpanded + '</div>' ;
+			groupedIcon = '<div class="grouped-icons">' + groupCollapsed + groupExpanded  + '</div>';
 		} 
 		if (colDef.width) {
 			styleArr.push('width:'+colDef.width + '');
@@ -439,27 +420,11 @@ export class Grid {
 				classArr.push(colDef.cellClasses);
 			}
 		}
-		// return  '<td class="' + classArr.join(' ') + '" style="'+ styleArr.join(';') +'" col-idx="' +colIndex+ '">'+
-		// 			'<div style="'+ styleArr.join(';') +'">' + 
-		// 				groupedIcon + val +
-		// 			 '</div>'+
-		// 		'</td>';
-		let out = document.createElement('td',{
-			'class': classArr.join(' '),
-			'style': styleArr.join(';'),
-			'col-idx': colIndex
-		});
-		let out1 = document.createElement('div', {
-			'style': styleArr.join(';')
-		});
-		if (groupedIcon) {
-			out1.appendChild( groupedIcon );			
-		}
-		out1.appendChild( document.createTextNode(val) );		
-		out.appendChild( out1 );
-		return out;
-
-
+		return  '<td class="' + classArr.join(' ') + '" style="'+ styleArr.join(';') +'" col-idx="' +colIndex+ '">'+
+					'<div style="'+ styleArr.join(';') +'">' + 
+						groupedIcon + val +
+					 '</div>'+
+				'</td>';
 	}
 	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
 		let styleArr:Array<string> = [];
@@ -469,82 +434,53 @@ export class Grid {
 		let returnObj:any = {};
 		let rowStr = '';
 		parentId = parentId || '';
-		let pid = (parentId ? parentId + '-' : '') + row.level + '|' + row.childIndex;
-		let trLeft = document.createElement('tr', {
-			'pid': pid + '',
-			'style': styleArr.join(';'),
-			'pr-idx': '' + parentRowIndex,
-			'lvl': ''+ rowGroupLevel,
-			'r-idx': '' + rowIndex
-		});
-		let trCenter = document.createElement('tr', {
-			'pid': pid + '',
-			'style': styleArr.join(';'),
-			'pr-idx': '' + parentRowIndex,
-			'lvl': ''+ rowGroupLevel,
-			'r-idx': '' + rowIndex
-		});
+	    let pid = (parentId ? parentId + '-' : '') + row.level + '|' + row.childIndex;
 	
 		this.columnDefs.forEach((colDef, colIdx) => {
 			let rowData = row;
 			if (pinnedLeftCount - 1 >= colIdx ) {
 				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel);			
 				arrLeft.push( rowStr );
-				trLeft.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) )
 			} else {
 				rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel );			
 				arrCenter.push( rowStr );
-				trCenter.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) )
 			}
 		},this);			
 		
 		if (arrCenter.length > 0) {
 			returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
 							'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
-			returnObj.centerEl = trCenter;						
 		}
 		if (arrLeft.length > 0) {
 			returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
 							'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
-			returnObj.leftEl = trLeft;						
 		}
 		return 	returnObj;	
 	}
 	renderChildrenDataRows(rowData:any, rowGroupLevel:number, parentRowIndex:number, pid:string ) {
-		// let arrCenter:Array<string> = [];
-		// let arrLeft:Array<string> = [];
-		let leftFragment = document.createDocumentFragment();
-		let centerFragment = document.createDocumentFragment();
-		let leftCount = 0;
+		let arrCenter:Array<string> = [];
+		let arrLeft:Array<string> = [];
 
 		rowData.children.forEach( (row:any, rowIndex:number) => {
 			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex, pid);
 
-			if (obj.centerEl) {
-				// arrCenter.push(obj.center)
-				centerFragment.appendChild(obj.centerEl);
+			if (obj.center) {
+				arrCenter.push(obj.center)
 			} 
-			if (obj.leftEl) {
-				// arrLeft.push(obj.left)
-				leftFragment.appendChild(obj.leftEl);
-				leftCount++;
+			if (obj.left) {
+				arrLeft.push(obj.left)
 			}
 		}, this);
 				
-		if ( leftCount > 0) {
-			// $(this.tableBodyLeft).find('tr[pid="'+ pid +'"]').after( arrLeft.join('') );
-			this.tableBodyLeft.appendChild(leftFragment);
+		if (arrLeft.length > 0) {
+			$(this.tableBodyLeft).find('tr[pid="'+ pid +'"]').after( arrLeft.join('') );
 		}
-		// $(this.tableBodyCenter).find('tr[pid="'+ pid  +'"]').after(arrCenter.join(''));
-		this.tableBodyCenter.appendChild(centerFragment);
+		$(this.tableBodyCenter).find('tr[pid="'+ pid  +'"]').after(arrCenter.join(''));
 
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
-	}
-	equalizeRowHeights( docFragment1, docFragment2, docFragment3 = null ) {
-
-	}
+	}	
 	equalizeBodyHeights(): void {
 		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
 		let centerColStartIdx=pinnedLeftCount;
@@ -645,35 +581,27 @@ export class Grid {
 		}
 	}
 	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number, parentId:string): void {
-		// let arrCenter:Array<string> = [];
-		// let arrLeft:Array<string> = [];
+		let arrCenter:Array<string> = [];
+		let arrLeft:Array<string> = [];
 		let startRowIndex = this.gridOptions.rowData.length;
-		let leftFragment = document.createDocumentFragment();
-		let centerFragment = document.createDocumentFragment();
-		let leftCount = 0;
 
 		rowData.forEach( (row:any, rowIndex:number) => {
 			let obj = this.createDataRow(row, startRowIndex + rowIndex, rowGroupLevel, parentRowIndex, parentId);
 
-			if (obj.centerEl) {
-				// arrCenter.push(obj.center)
-				centerFragment.appendChild(obj.centerEl);
-				// centerCount++;
+			if (obj.center) {
+				arrCenter.push(obj.center)
 			} 
-			if (obj.leftEl) {
-				// arrLeft.push(obj.left)
-				leftFragment.appendChild(obj.leftEl);
-				leftCount++;
+			if (obj.left) {
+				arrLeft.push(obj.left)
 			}
 		});	
 				
-		if (leftCount > 0) {
-			// this.tableBodyLeft.innerHTML += arrLeft.join('');
-			this.tableBodyLeft.appendChild(leftFragment);
-			this.hScrollBarContainerLeft.querySelector('.scroll-content').style.width = this.tableBodyLeft.offsetWidth + 'px';	
+		if (arrLeft.length > 0) {
+			this.tableBodyLeft.innerHTML += arrLeft.join('');
+			this.hScrollBarContainerLeft.querySelector('.scroll-content').style.width = this.tableBodyLeft.offsetWidth + 'px';
+			
 		}
-		// this.tableBodyCenter.innerHTML += arrCenter.join('');
-		this.tableBodyCenter.appendChild(centerFragment);
+		this.tableBodyCenter.innerHTML += arrCenter.join('');
 		this.hScrollBarContainerCenter.querySelector('.scroll-content').style.width = this.tableBodyCenter.offsetWidth + 'px';
 
 		if (this.gridOptions.equalRowHeights === true) {
