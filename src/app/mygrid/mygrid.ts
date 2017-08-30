@@ -365,7 +365,7 @@ export class Grid {
 		let el = document.createElement(tagName);
 		if (attrs) {
 			for (let k in attrs) {
-				if (k !== 'children') {
+				if (k === 'children') {
 					attrs[k].forEach((child) => {
 						el.appendChild(child);
 					})
