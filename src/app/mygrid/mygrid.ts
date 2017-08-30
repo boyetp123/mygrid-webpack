@@ -284,7 +284,7 @@ export class Grid {
 	}
 	setColumnDefs(colDefs:ColumnDef[]) {
 		this.columnDefs=[];
-		this.columnDefs = colDefs.map(function(colDef:ColumnDef) {
+		this.columnDefs = colDefs.map((colDef:ColumnDef) => {
 			return new ColumnDef( colDef.field,
 						colDef.headerName , 
 						colDef.type ,
@@ -360,7 +360,22 @@ export class Grid {
 							icons.sortDescending + icons.sortAscending + '</span>' +
 					'</div>'+
 				'</th>';
-	}	
+	}
+	createElement(tagName: string, attrs: any): any {
+		let el = document.createElement(tagName);
+		if (attrs) {
+			for (let k in attrs) {
+				if (k !== 'children') {
+					attrs[k].forEach((child) => {
+						el.appendChild(child);
+					})
+				} else {
+					el.setAttribute(k, attrs[k]);					
+				}
+			}	
+		}
+		return el;
+	}
 	createDataCell(rowObj: rowObject, colDef: ColumnDef,
 				rowIndex: number, colIndex: number, isFirst: boolean,
 				rowGroupLevel: number): any {
@@ -374,11 +389,6 @@ export class Grid {
 		let groupedIcon: any ;
 
 		if (isGrouped && isDataAlreadyGrouped && colIndex ===0) {
-			// let groupCollapsed = '<div class="group-collapse" style="display:'+ 
-			// 	( !rowObj.expanded?'':'none' ) +'">' + this.gridOptions.icons.groupCollapsed + '</div>'; 
-			// let groupExpanded =  '<div class="group-expand" style="display:'+(rowObj.expanded?'':'none')+'">' + 
-			// 					this.gridOptions.icons.groupExpanded + '</div>' ;
-			// groupedIcon = '<div class="grouped-icons">' + groupCollapsed + groupExpanded  + '</div>';
 			// tslint: ignore
 			let groupCollapsed: any = document.createElement('div'); 
 			groupCollapsed.setAttribute('class', 'group-collapse');
@@ -436,22 +446,19 @@ export class Grid {
 				classArr.push(colDef.cellClasses);
 			}
 		}
-		// return  '<td class="' + classArr.join(' ') + '" style="'+ styleArr.join(';') +'" col-idx="' +colIndex+ '">'+
-		// 			'<div style="'+ styleArr.join(';') +'">' + 
-		// 				groupedIcon + val +
-		// 			 '</div>'+
-		// 		'</td>';
-		let out = document.createElement('td');
-		out.setAttribute( 'class', classArr.join(' ') );
-		out.setAttribute( 'style', styleArr.join(';') );
-		out.setAttribute( 'col-idx', colIndex );
+		
+		let out = this.createElement('td',{
+		 'class'  : classArr.join(' '),
+		 'style'  : styleArr.join(';'),
+		 'col-idx': colIndex 		
+		});
 
 		let out1 = document.createElement('div');
 		out1.setAttribute( 'style', styleArr.join(';') );
 		if (groupedIcon) {
 			out1.appendChild( groupedIcon );			
 		}
-		out1.appendChild( document.createTextNode(val) );		
+		out1.appendChild( document.createTextNode(val) );
 		out.appendChild( out1 );
 		return out;
 
