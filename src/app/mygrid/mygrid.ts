@@ -519,6 +519,7 @@ export class Grid {
 		let leftFragment = document.createDocumentFragment();
 		let centerFragment = document.createDocumentFragment();
 		let leftCount = 0;
+		let beforeElement;
 
 		rowData.children.forEach( (row:any, rowIndex:number) => {
 			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex, pid);
@@ -535,11 +536,11 @@ export class Grid {
 		}, this);
 				
 		if ( leftCount > 0) {
-			// $(this.tableBodyLeft).find('tr[pid="'+ pid +'"]').after( arrLeft.join('') );
-			this.tableBodyLeft.appendChild(leftFragment);
+			beforeElement = this.tableBodyLeft.querySelector('tr[pid="'+ pid +'"]');
+			beforeElement.parentElement.insertBefore( leftFragment, beforeElement.nextSibling );
 		}
-		// $(this.tableBodyCenter).find('tr[pid="'+ pid  +'"]').after(arrCenter.join(''));
-		this.tableBodyCenter.appendChild(centerFragment);
+		beforeElement = this.tableBodyCenter.querySelector('tr[pid="'+ pid +'"]');
+		beforeElement.parentElement.insertBefore( centerFragment, beforeElement.nextSibling );
 
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
