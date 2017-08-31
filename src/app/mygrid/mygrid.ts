@@ -446,32 +446,28 @@ export class Grid {
 				classArr.push(colDef.cellClasses);
 			}
 		}
-		
-		let out = this.createElement('td',{
-		 'class'  : classArr.join(' '),
-		 'style'  : styleArr.join(';'),
-		 'col-idx': colIndex 		
-		});
 
-		let out1 = document.createElement('div');
-		out1.setAttribute( 'style', styleArr.join(';') );
+		let kids = [];
 		if (groupedIcon) {
-			out1.appendChild( groupedIcon );			
+			kids.push( groupedIcon );			
 		}
-		out1.appendChild( document.createTextNode(val) );
-		out.appendChild( out1 );
+		kids.push( document.createTextNode(val) );
+		let out1 = this.createElement('div',{
+			'style'  : styleArr.join(';'),
+			children: kids
+		});
+		let out = this.createElement('td',{
+			'class'  : classArr.join(' '),
+			'style'  : styleArr.join(';'),
+			'col-idx': colIndex,
+			children: [ out1 ]	
+		});
 		return out;
-
-
 	}
 	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
-		// let styleArr:Array<string> = [];
-		// let arrCenter:Array<string> = [];
-		// let arrLeft:Array<string> = [];
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
 		let returnObj: any = {};
 		let centerCount = 0, leftCount = 0;
-		// let rowStr = '';
 		parentId = parentId || '';
 		let pid = (parentId ? parentId + '-' : '') + row.level + '|' + row.childIndex;
 		let trLeft = document.createElement('tr');
@@ -489,64 +485,61 @@ export class Grid {
 		this.columnDefs.forEach((colDef, colIdx) => {
 			let rowData = row;
 			if (pinnedLeftCount - 1 >= colIdx ) {
-				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel);			
-				// arrLeft.push( rowStr );
 				trLeft.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel) );
 				 leftCount ++;
 			} else {
-				// rowStr = this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel );			
-				// arrCenter.push( rowStr );
 				trCenter.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) );
 				centerCount++;
 			}
 		},this);			
 		
 		if ( centerCount > 0) {
-			// returnObj.center ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
-			// 				'" lvl="'+ rowGroupLevel +'" r-idx="'+rowIndex+'">' + arrCenter.join('') +'</tr>';
 			returnObj.centerEl = trCenter;						
 		}
 		if ( leftCount > 0) {
-			// returnObj.left ='<tr pid="'+ pid +'" style="'+styleArr.join(';')+'" pr-idx="'+ parentRowIndex +
-			// 				'" lvl="'+ rowGroupLevel +'"  r-idx="'+rowIndex+'">' + arrLeft.join('') +'</tr>';
 			returnObj.leftEl = trLeft;						
 		}
 		return 	returnObj;	
 	}
-	renderChildrenDataRows(rowData:any, rowGroupLevel:number, parentRowIndex:number, pid:string ) {
-		// let arrCenter:Array<string> = [];
-		// let arrLeft:Array<string> = [];
-		let leftFragment = document.createDocumentFragment();
-		let centerFragment = document.createDocumentFragment();
-		let leftCount = 0;
+	renderChildrenDataRows(rowData: any, rowGroupLevel: number, parentRowIndex: number, pid: string ) {
 		let beforeElement;
-
-		rowData.children.forEach( (row:any, rowIndex:number) => {
-			let obj = this.createDataRow(row, rowIndex, rowGroupLevel, parentRowIndex, pid);
-
-			if (obj.centerEl) {
-				// arrCenter.push(obj.center)
-				centerFragment.appendChild(obj.centerEl);
-			} 
-			if (obj.leftEl) {
-				// arrLeft.push(obj.left)
-				leftFragment.appendChild(obj.leftEl);
-				leftCount++;
-			}
-		}, this);
+		let rowFragments = this.createRowFragments( rowData.children, rowGroupLevel, parentRowIndex, pid );
 				
-		if ( leftCount > 0) {
+		if ( rowFragments.leftCount > 0) {
 			beforeElement = this.tableBodyLeft.querySelector('tr[pid="'+ pid +'"]');
-			beforeElement.parentElement.insertBefore( leftFragment, beforeElement.nextSibling );
+			beforeElement.parentElement.insertBefore( rowFragments.leftFragment, beforeElement.nextSibling );
 		}
 		beforeElement = this.tableBodyCenter.querySelector('tr[pid="'+ pid +'"]');
-		beforeElement.parentElement.insertBefore( centerFragment, beforeElement.nextSibling );
+		beforeElement.parentElement.insertBefore( rowFragments.centerFragment, beforeElement.nextSibling );
 
 		if (this.gridOptions.equalRowHeights === true) {
 			this.equalizeBodyHeights();
 		}
 	}
 	equalizeRowHeights( docFragment1, docFragment2, docFragment3 = null ) {
+		let arr1 = Array.prototype.slice.call( docFragment1.querySelectorAll('tr'), 0);
+		let arr2 = Array.prototype.slice.call( docFragment2.querySelectorAll('tr'), 0);
+		let arr3;
+
+		if ( docFragment3 ) {
+			arr3 = Array.prototype.slice.call( docFragment3.querySelectorAll('tr'), 0);
+		}
+		arr1.forEach( (el, idx) => {
+			let maxHeight = 0;
+			if ( docFragment3 ) {
+				if ( el.offsetHeight !== arr2[idx].offsetHeight || el.offsetHeight !== arr3[idx].offsetHeight 
+					|| arr2[idx].offsetHeight !== arr3[idx].offsetHeight) {
+					
+					maxHeight = Math.max.apply(null, [el.offsetHeight, arr2[idx].offsetHeight, arr3[idx].offsetHeight ]);
+					arr3[idx].style.height = arr2[idx].style.height = el.style.height = maxHeight + 'px';
+				}
+			} else {
+				if ( el.offsetHeight !== arr2[idx].offsetHeight ) {
+					maxHeight = Math.max(el.offsetHeight, arr2[idx].offsetHeight);
+					arr2[idx].style.height = el.style.height = maxHeight + 'px';
+				}
+			}
+		});
 
 	}
 	equalizeBodyHeights(): void {
@@ -582,7 +575,7 @@ export class Grid {
 				let sortedData;
 				if (data.message === 'sort') {
 					sortFunc2 = sortFunc(e.data);	
-					console.info('message past to start sorting', e.data, 'sortFunc2', sortFunc2 );
+					// console.info('message past to start sorting', e.data, 'sortFunc2', sortFunc2 );
 					sortedData = data.rowData.sort(sortFunc2);					
 					postMessage({sortedData: sortedData });
 				} else if (data.message === 'setSortFunction') {
@@ -648,36 +641,40 @@ export class Grid {
 			// remove the rows here
 		}
 	}
-	createBodyData(rowData:any, rowGroupLevel:number, parentRowIndex:number, parentId:string): void {
-		// let arrCenter:Array<string> = [];
-		// let arrLeft:Array<string> = [];
+
+	createRowFragments(rowData: any, rowGroupLevel: number, parentRowIndex: number, parentId: string): any {
 		let startRowIndex = this.gridOptions.rowData.length;
 		let leftFragment = document.createDocumentFragment();
 		let centerFragment = document.createDocumentFragment();
 		let leftCount = 0;
-
-		rowData.forEach( (row:any, rowIndex:number) => {
+		
+		rowData.forEach( (row: any, rowIndex:number) => {
 			let obj = this.createDataRow(row, startRowIndex + rowIndex, rowGroupLevel, parentRowIndex, parentId);
 
 			if (obj.centerEl) {
-				// arrCenter.push(obj.center)
 				centerFragment.appendChild(obj.centerEl);
-				// centerCount++;
 			} 
 			if (obj.leftEl) {
-				// arrLeft.push(obj.left)
 				leftFragment.appendChild(obj.leftEl);
 				leftCount++;
 			}
 		});	
+		this.equalizeRowHeights(leftFragment, leftFragment);
+		return {
+			centerFragment: centerFragment,
+			leftFragment: leftFragment,
+			leftCount: leftCount
+		}
+	}
+
+	createBodyData(rowData: any, rowGroupLevel: number, parentRowIndex: number, parentId: string): void {
+		let rowFragments = this.createRowFragments( rowData, rowGroupLevel, parentRowIndex, parentId );
 				
-		if (leftCount > 0) {
-			// this.tableBodyLeft.innerHTML += arrLeft.join('');
-			this.tableBodyLeft.appendChild(leftFragment);
+		if (rowFragments.leftCount > 0) {
+			this.tableBodyLeft.appendChild(rowFragments.leftFragment );
 			this.hScrollBarContainerLeft.querySelector('.scroll-content').style.width = this.tableBodyLeft.offsetWidth + 'px';	
 		}
-		// this.tableBodyCenter.innerHTML += arrCenter.join('');
-		this.tableBodyCenter.appendChild(centerFragment);
+		this.tableBodyCenter.appendChild(rowFragments.centerFragment );
 		this.hScrollBarContainerCenter.querySelector('.scroll-content').style.width = this.tableBodyCenter.offsetWidth + 'px';
 
 		if (this.gridOptions.equalRowHeights === true) {
@@ -824,8 +821,9 @@ export class Grid {
 						resolve(sortedData);				
 					})).then( (data: any) => {
 						new Promise((resolve, reject) => {
-							console.log('injecting new sorted data')
+							console.log('start injecting new sorted data')
 							this.setDataRow( data );
+							console.log('done injecting new sorted data')
 							resolve('ok');						
 						})
 					}).then( () => {
