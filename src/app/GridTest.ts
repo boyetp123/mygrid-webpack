@@ -70,7 +70,7 @@ export class GridTest {
          
         this.grid = new Grid('#mygrid-test', this.gridOptions);
         this.grid2 = new Grid('#mygrid-test2', this.gridOptions2);
-        this.loadGroup();
+        // this.loadGroup();
         this.loadAthletes();
         this.switchWW();
     }

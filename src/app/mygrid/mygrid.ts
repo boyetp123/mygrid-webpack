@@ -481,22 +481,28 @@ export class Grid {
 		trCenter.setAttribute('pr-idx', parentRowIndex);
 		trCenter.setAttribute('lvl', rowGroupLevel);
 		trCenter.setAttribute('r-idx', rowIndex);
-	
+		// let leftFragment = document.createDocumentFragment();
+		// let centerFragment = document.createDocumentFragment();
+		
 		this.columnDefs.forEach((colDef, colIdx) => {
 			let rowData = row;
 			if (pinnedLeftCount - 1 >= colIdx ) {
+				// leftFragment.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel) );
 				trLeft.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel) );
 				 leftCount ++;
 			} else {
+				// centerFragment.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) );
 				trCenter.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) );
 				centerCount++;
 			}
 		},this);			
 		
 		if ( centerCount > 0) {
+			// trCenter.appendChild(centerFragment);
 			returnObj.centerEl = trCenter;						
 		}
 		if ( leftCount > 0) {
+			// trLeft.appendChild(leftFragment);
 			returnObj.leftEl = trLeft;						
 		}
 		return 	returnObj;	
@@ -643,6 +649,8 @@ export class Grid {
 	}
 
 	createRowFragments(rowData: any, rowGroupLevel: number, parentRowIndex: number, parentId: string): any {
+		// let startTime = Date.now();
+		// console.log('start createRowFragments' );
 		let startRowIndex = this.gridOptions.rowData.length;
 		let leftFragment = document.createDocumentFragment();
 		let centerFragment = document.createDocumentFragment();
@@ -659,7 +667,9 @@ export class Grid {
 				leftCount++;
 			}
 		});	
+		// console.log('done createRowFragments elapse', Date.now() - startTime);
 		this.equalizeRowHeights(leftFragment, leftFragment);
+		// console.log('done createRowFragments elapse after equalizeRowHeights', Date.now() - startTime);
 		return {
 			centerFragment: centerFragment,
 			leftFragment: leftFragment,
@@ -668,6 +678,8 @@ export class Grid {
 	}
 
 	createBodyData(rowData: any, rowGroupLevel: number, parentRowIndex: number, parentId: string): void {
+		let startTime = Date.now();
+		console.log('start createBodyData' );
 		let rowFragments = this.createRowFragments( rowData, rowGroupLevel, parentRowIndex, parentId );
 				
 		if (rowFragments.leftCount > 0) {
@@ -677,9 +689,10 @@ export class Grid {
 		this.tableBodyCenter.appendChild(rowFragments.centerFragment );
 		this.hScrollBarContainerCenter.querySelector('.scroll-content').style.width = this.tableBodyCenter.offsetWidth + 'px';
 
-		if (this.gridOptions.equalRowHeights === true) {
-			this.equalizeBodyHeights();
-		}
+		// if (this.gridOptions.equalRowHeights === true) {
+		// 	this.equalizeBodyHeights();
+		// }
+		console.log('done createBodyData elapse', Date.now() - startTime);
 	}
 	alignHeadersAndDataCellsColumnWidths():void {
 		this.columnDefs.forEach( (columnDef, idx, arr) => {
@@ -731,7 +744,8 @@ export class Grid {
 		$(this.tableBodyCenter).find('tr[pid^="'+ pid  +'-"]').remove();
 	}
 	processData(rows, parentNode, level) {
-		return rows.map((row, idx) => {
+		console.log('start processData');
+		let out = rows.map((row, idx) => {
 			row.parent = parentNode;
 			row.level = level;
 			row.childIndex = idx;
@@ -742,12 +756,14 @@ export class Grid {
 			}
 			return row;
 		});
+		console.log('done processData');
+		return out;
 	}
 	setDataRow(dataRow) {
 		if (dataRow.length > 0) {
 			// this.gridOptions.rowData = dataRow;
 			this.removeData(0, 0);
-			// this.gridOptions.rowData = dataRow; //.slice(0,200) ;	
+			// this.gridOptions.rowData = dataRow; //.slice(0,200) ;
 			let processedRows = this.processData(dataRow, null, 0);
 			this.createBodyData(processedRows, 0, 0, '');
 			this.gridOptions.rowData =  processedRows
