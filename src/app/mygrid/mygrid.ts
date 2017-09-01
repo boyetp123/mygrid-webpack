@@ -452,11 +452,11 @@ export class Grid {
 			kids.push( groupedIcon );			
 		}
 		kids.push( document.createTextNode(val) );
-		let out1 = this.createElement('div',{
+		let out1 = this.createElement('div', {
 			'style'  : styleArr.join(';'),
 			children: kids
 		});
-		let out = this.createElement('td',{
+		let out = this.createElement('td', {
 			'class'  : classArr.join(' '),
 			'style'  : styleArr.join(';'),
 			'col-idx': colIndex,
