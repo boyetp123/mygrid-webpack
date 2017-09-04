@@ -465,6 +465,8 @@ export class Grid {
 		return out;
 	}
 	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
+		let startTime = Date.now();
+		console.log('start createDataRow' );
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
 		let returnObj: any = {};
 		let centerCount = 0, leftCount = 0;
@@ -491,6 +493,7 @@ export class Grid {
 				trLeft.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , colIdx === 0, rowGroupLevel) );
 				 leftCount ++;
 			} else {
+				// tslint:disable-next-line:max-line-length
 				// centerFragment.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) );
 				trCenter.appendChild( this.createDataCell(rowData, colDef, rowIndex, colIdx , (colIdx - pinnedLeftCount) === 0, rowGroupLevel ) );
 				centerCount++;
@@ -505,6 +508,8 @@ export class Grid {
 			// trLeft.appendChild(leftFragment);
 			returnObj.leftEl = trLeft;						
 		}
+		console.log('end createDataRow- elapse', Date.now() - startTime  );
+		
 		return 	returnObj;	
 	}
 	renderChildrenDataRows(rowData: any, rowGroupLevel: number, parentRowIndex: number, pid: string ) {
@@ -649,8 +654,8 @@ export class Grid {
 	}
 
 	createRowFragments(rowData: any, rowGroupLevel: number, parentRowIndex: number, parentId: string): any {
-		// let startTime = Date.now();
-		// console.log('start createRowFragments' );
+		let startTime = Date.now();
+		console.log('start createRowFragments' );
 		let startRowIndex = this.gridOptions.rowData.length;
 		let leftFragment = document.createDocumentFragment();
 		let centerFragment = document.createDocumentFragment();
@@ -667,9 +672,9 @@ export class Grid {
 				leftCount++;
 			}
 		});	
-		// console.log('done createRowFragments elapse', Date.now() - startTime);
+		console.log('done createRowFragments elapse', Date.now() - startTime);
 		this.equalizeRowHeights(leftFragment, leftFragment);
-		// console.log('done createRowFragments elapse after equalizeRowHeights', Date.now() - startTime);
+		console.log('done createRowFragments elapse after equalizeRowHeights', Date.now() - startTime);
 		return {
 			centerFragment: centerFragment,
 			leftFragment: leftFragment,
