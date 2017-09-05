@@ -26,7 +26,8 @@ export class Grid {
 	columnDefs: ColumnDef[];
 	theGrid: any;
 	gridHeader: any;
-	gridBody: any;
+	gridBody: Element;
+	gridBodyTableContent: Element;
 	theGridTdCenterPane: any;
 	theGridTdLeftPane: any;
 	theGridCenter: any;
@@ -53,6 +54,13 @@ export class Grid {
 	hScrollBarContainerCenter: any;
 	hScrollBarContainerRight: any;
 
+	// dataposition makers
+	upperPos: number = 0;
+	lowerPos: number = 0;
+	upperQueue: number = 20;
+	lowerQueue: number = 20;
+	vscrollTimeout: any = null;
+	
 	constructor(selector:string, gridOptions:GridOptions ) {
 		this.hasInitCcompleted = false;
 		this.gridContainer = document.querySelector(selector);
@@ -163,6 +171,7 @@ export class Grid {
 		this.theGrid = this.gridContainer.querySelector('div.mygrid');
 		this.gridHeader = this.theGrid.querySelector('.mygrid-header');
 		this.gridBody = this.theGrid.querySelector('.mygrid-scroll-container-body');
+		this.gridBodyTableContent = this.gridBody.children[0];
 
 		// header left pane
 		this.headerLeftPane = this.gridHeader.querySelector('.left-pane'); 
@@ -466,7 +475,7 @@ export class Grid {
 	}
 	createDataRow(row:any, rowIndex:number, rowGroupLevel:number, parentRowIndex:number, parentId:string) {
 		let startTime = Date.now();
-		console.log('start createDataRow' );
+		// console.log('start createDataRow' );
 		let pinnedLeftCount = this.gridOptions.disableHorizontalScroll ? 0 :  this.gridOptions.pinnedLeftCount;;
 		let returnObj: any = {};
 		let centerCount = 0, leftCount = 0;
@@ -508,7 +517,7 @@ export class Grid {
 			// trLeft.appendChild(leftFragment);
 			returnObj.leftEl = trLeft;						
 		}
-		console.log('end createDataRow- elapse', Date.now() - startTime  );
+		// console.log('end createDataRow- elapse', Date.now() - startTime  );
 		
 		return 	returnObj;	
 	}
@@ -655,7 +664,7 @@ export class Grid {
 
 	createRowFragments(rowData: any, rowGroupLevel: number, parentRowIndex: number, parentId: string): any {
 		let startTime = Date.now();
-		console.log('start createRowFragments' );
+		// console.log('start createRowFragments' );
 		let startRowIndex = this.gridOptions.rowData.length;
 		let leftFragment = document.createDocumentFragment();
 		let centerFragment = document.createDocumentFragment();
@@ -672,9 +681,9 @@ export class Grid {
 				leftCount++;
 			}
 		});	
-		console.log('done createRowFragments elapse', Date.now() - startTime);
+		// console.log('done createRowFragments elapse', Date.now() - startTime);
 		this.equalizeRowHeights(leftFragment, leftFragment);
-		console.log('done createRowFragments elapse after equalizeRowHeights', Date.now() - startTime);
+		// console.log('done createRowFragments elapse after equalizeRowHeights', Date.now() - startTime);
 		return {
 			centerFragment: centerFragment,
 			leftFragment: leftFragment,
@@ -689,14 +698,15 @@ export class Grid {
 				
 		if (rowFragments.leftCount > 0) {
 			this.tableBodyLeft.appendChild(rowFragments.leftFragment );
-			this.hScrollBarContainerLeft.querySelector('.scroll-content').style.width = this.tableBodyLeft.offsetWidth + 'px';	
+			setTimeout( evt => {
+				this.hScrollBarContainerLeft.querySelector('.scroll-content').style.width = this.tableBodyLeft.offsetWidth + 'px';	
+			}, 100)
 		}
 		this.tableBodyCenter.appendChild(rowFragments.centerFragment );
-		this.hScrollBarContainerCenter.querySelector('.scroll-content').style.width = this.tableBodyCenter.offsetWidth + 'px';
+		setTimeout( evt => {
+			this.hScrollBarContainerCenter.querySelector('.scroll-content').style.width = this.tableBodyCenter.offsetWidth + 'px';
+		}, 300);			
 
-		// if (this.gridOptions.equalRowHeights === true) {
-		// 	this.equalizeBodyHeights();
-		// }
 		console.log('done createBodyData elapse', Date.now() - startTime);
 	}
 	alignHeadersAndDataCellsColumnWidths():void {
@@ -766,9 +776,9 @@ export class Grid {
 	}
 	setDataRow(dataRow) {
 		if (dataRow.length > 0) {
-			// this.gridOptions.rowData = dataRow;
+			this.upperPos = 0;
+			this.lowerPos = Math.ceil(parseInt(this.gridOptions.height) / parseInt( this.gridOptions.rowHeight ) ) + this.lowerQueue;
 			this.removeData(0, 0);
-			// this.gridOptions.rowData = dataRow; //.slice(0,200) ;
 			let processedRows = this.processData(dataRow, null, 0);
 			this.createBodyData(processedRows, 0, 0, '');
 			this.gridOptions.rowData =  processedRows
@@ -783,6 +793,11 @@ export class Grid {
 			this.alignHeadersAndDataCellsColumnWidths();
 		}
 	}
+	manageQueue( scrollEvent) {
+		// console.info('lowerPos', this.lowerPos, 'upperPos', this.upperPos, 'lowerQueue', 
+		// this.lowerQueue, 'upperQueue', this.upperQueue)
+		console.info('top',scrollEvent.target.scrollTop,'bottom',this.gridBodyTableContent.scrollHeight);				
+	}
 	setEvents() {
 		let currentLeft = 0;
 		let headerContainerInner = this.headerContainerInnerCenter;
@@ -792,14 +807,26 @@ export class Grid {
 		}
 		this.setSortFun();
 
-		let onScrollEvent = function(event) {
+		let onHorizontalScrollEvent = function(event) {
 			let scrollLeft = event.currentTarget.scrollLeft;
-			// if ( currentLeft !== scrollLeft ) {
-				currentLeft = scrollLeft;
-				headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';
-			// }
+			currentLeft = scrollLeft;
+			headerContainerInner.style.left = (scrollLeft  * -1 ) + 'px';
+			console.info('scrollLeft', scrollLeft)
 		}
-		this.bodyContainerCenter.addEventListener("scroll",onScrollEvent.bind(this)); 
+		let onVerticalScrollEvent = event => {
+			if ( this.vscrollTimeout ) {
+				clearTimeout(this.vscrollTimeout);
+				this.vscrollTimeout = null;
+			}
+			let that = this;
+			(function (event1){
+				that.vscrollTimeout = setTimeout( evt => {
+					that.manageQueue( event1 );			
+				}, 15);	
+			})(event);
+		}
+		this.gridBody.addEventListener("scroll",onVerticalScrollEvent); 
+		this.bodyContainerCenter.addEventListener("scroll",onHorizontalScrollEvent.bind(this)); 
 		let sortingDir = '';
 
 		let onClickHeader = function(event ) {
