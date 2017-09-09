@@ -26,8 +26,8 @@ export class Grid {
 	columnDefs: ColumnDef[];
 	theGrid: any;
 	gridHeader: any;
-	gridBody: Element;
-	gridBodyTableContent: Element;
+	gridBody: any;
+	gridBodyTableContent: any;
 	theGridTdCenterPane: any;
 	theGridTdLeftPane: any;
 	theGridCenter: any;
@@ -53,6 +53,8 @@ export class Grid {
 	hScrollBarContainerLeft: any;
 	hScrollBarContainerCenter: any;
 	hScrollBarContainerRight: any;
+
+	avgRowHeight: number;
 
 	// dataposition makers
 	upperPos: number = 0;
@@ -532,14 +534,15 @@ export class Grid {
 		beforeElement = this.tableBodyCenter.querySelector('tr[pid="'+ pid +'"]');
 		beforeElement.parentElement.insertBefore( rowFragments.centerFragment, beforeElement.nextSibling );
 
-		if (this.gridOptions.equalRowHeights === true) {
-			this.equalizeBodyHeights();
-		}
+		// if (this.gridOptions.equalRowHeights === true) {
+		// 	this.equalizeBodyHeights();
+		// }
 	}
 	equalizeRowHeights( docFragment1, docFragment2, docFragment3 = null ) {
 		let arr1 = Array.prototype.slice.call( docFragment1.querySelectorAll('tr'), 0);
 		let arr2 = Array.prototype.slice.call( docFragment2.querySelectorAll('tr'), 0);
 		let arr3;
+		this.avgRowHeight = parseInt(this.gridOptions.rowHeight);
 
 		if ( docFragment3 ) {
 			arr3 = Array.prototype.slice.call( docFragment3.querySelectorAll('tr'), 0);
@@ -562,28 +565,24 @@ export class Grid {
 		});
 
 	}
-	equalizeBodyHeights(): void {
-		let pinnedLeftCount = this.gridOptions.pinnedLeftCount
-		let centerColStartIdx=pinnedLeftCount;
-		let tdsLeft = Array.prototype.slice.call( this.tableBodyLeft.querySelectorAll('tbody > tr > td[col-idx="0"]') , 0 );
-		let tdsCenter = Array.prototype.slice.call(this.tableBodyCenter.querySelectorAll('tbody > tr > td[col-idx="'+centerColStartIdx+'"]'), 0);
-		let len = tdsLeft.length;
-		// let startTime = (new Date()).getTime();
-		for(let i=0; i < len; i++) {
-			let tdleft = tdsLeft[i];
-			let tdCenter = tdsCenter[i];
-			let lH = tdleft.offsetHeight ;
-			let cH = tdCenter.offsetHeight;
+	// equalizeBodyHeights(): void {
+	// 	let pinnedLeftCount = this.gridOptions.pinnedLeftCount
+	// 	let centerColStartIdx=pinnedLeftCount;
+	// 	let tdsLeft = Array.prototype.slice.call( this.tableBodyLeft.querySelectorAll('tbody > tr > td[col-idx="0"]') , 0 );
+	// 	let tdsCenter = Array.prototype.slice.call(this.tableBodyCenter.querySelectorAll('tbody > tr > td[col-idx="'+centerColStartIdx+'"]'), 0);
+	// 	let len = tdsLeft.length;
+	// 	for(let i=0; i < len; i++) {
+	// 		let tdleft = tdsLeft[i];
+	// 		let tdCenter = tdsCenter[i];
+	// 		let lH = tdleft.offsetHeight ;
+	// 		let cH = tdCenter.offsetHeight;
 			
-			if (tdleft && tdCenter && lH !== cH ) {
-				// console.info('equalizing height');
-				let maxHeight = Math.max( cH , lH );
-				tdleft.style.height =  tdCenter.style.height = maxHeight + 'px';
-			}
-		}
-		// let endTime = (new Date()).getTime();
-		// console.info('using array total time for ' + len + ' records ' + ( (endTime - startTime)/1000 ) + ' secs');
-	}
+	// 		if (tdleft && tdCenter && lH !== cH ) {
+	// 			let maxHeight = Math.max( cH , lH );
+	// 			tdleft.style.height =  tdCenter.style.height = maxHeight + 'px';
+	// 		}
+	// 	}
+	// }
 	initSortWebWorker(): void {
 		let self: any;
 		let sortFun = () => {
@@ -794,8 +793,7 @@ export class Grid {
 		}
 	}
 	manageQueue( scrollEvent) {
-		// console.info('lowerPos', this.lowerPos, 'upperPos', this.upperPos, 'lowerQueue', 
-		// this.lowerQueue, 'upperQueue', this.upperQueue)
+		// this.avgRowHeight
 		console.info('top',scrollEvent.target.scrollTop,'bottom',this.gridBodyTableContent.scrollHeight);				
 	}
 	setEvents() {
@@ -822,7 +820,7 @@ export class Grid {
 			(function (event1){
 				that.vscrollTimeout = setTimeout( evt => {
 					that.manageQueue( event1 );			
-				}, 15);	
+				}, 10);	
 			})(event);
 		}
 		this.gridBody.addEventListener("scroll",onVerticalScrollEvent); 
