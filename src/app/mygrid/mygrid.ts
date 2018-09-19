@@ -1,5 +1,6 @@
 /*
 	do sorting on the web workers
+	tsc --outDir es6 --t ES6 ./*.ts
 */
 /*
  import moment  from 'moment';
